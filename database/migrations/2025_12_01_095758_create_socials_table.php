@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('socials', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('store_id');
+            $table->foreignId('store_id')->constrained('stores')->cascadeOnDelete();
             $table->string('platform');
             $table->string('url');
             $table->timestamps();

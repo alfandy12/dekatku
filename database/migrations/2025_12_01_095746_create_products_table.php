@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('store_id');
-            $table->foreign('store_id')->references('id')->on('stores');
+            $table->foreignId('store_id')->constrained('stores')->cascadeOnDelete();
             $table->string('title');
             $table->string('url_media')->nullable();
             $table->decimal('price')->nullable();
