@@ -6,38 +6,41 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Filament\Models\Contracts\HasName;
 
-class Store extends Model
+class Store extends Model implements HasName
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
+        'title',
         'slug',
+        'description',
+        'type',
+        'url_media',
+        'location',
     ];
 
-    /**
-     * Definisikan relasi 'tenants' untuk Model Tenant.
-     * Dalam kasus ini, siapa saja yang memiliki akses ke 'Store' ini.
-     */
+    protected $casts = [
+        'location' => 'array',
+    ];
+
     public function users(): BelongsToMany
     {
-        // Pivot table default-nya adalah 'store_user'
+        // Pivot table store_user
         return $this->belongsToMany(User::class);
     }
-
-    /**
-     * Dapatkan daftar semua model yang terkait dengan 'Store' ini.
-     * Contoh: Produk-produk yang dimiliki oleh toko ini.
-     */
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
     }
 
-    // Metode ini diperlukan oleh kontrak HasTenants.
     public function getTenants($user): array
     {
         return $user->stores->all();
+    }
+    public function getFilamentName(): string
+    {
+        return "{$this->title}";
     }
 }

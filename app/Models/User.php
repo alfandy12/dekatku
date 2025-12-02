@@ -11,6 +11,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasTenants;
 
 class User extends Authenticatable implements FilamentUser, HasTenants
 
@@ -67,6 +69,19 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
     public function canAccessTenant(Model $tenant): bool
     {
-        return $this->stores()->whereKey($tenant)->exists();
+        return true;
+        // return $this->teams()->whereKey($tenant)->exists();
     }
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // Add your logic here. For example, check if the user is marked as an admin.
+        // If you don't have an 'is_admin' column, you can check roles or just return true for now.
+        return true;
+    }
+
+    public function getTenantName(Model $tenant): string
+    {
+        return $tenant->title;
+    }
+    
 }
