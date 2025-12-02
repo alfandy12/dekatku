@@ -1,4 +1,7 @@
 import { UserPlus, MapPin, MessageSquare } from 'lucide-react';
+import { Marquee } from './marquee';
+import FeatureCard from './feature-card';
+
 
 const features = [
   {
@@ -18,41 +21,45 @@ const features = [
   }
 ];
 
+
+
 export default function FeatureCards() {
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-10">
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {features.map((feature, index) => {
-          const Icon = feature.icon;
-          return (
-            <div
-              key={index}
-              className="group relative rounded-2xl border border-white/20 border-t border-l bg-white/10 p-6 backdrop-blur-lg transition-all duration-300 hover:bg-white/10 hover:border-white/30 hover:shadow-xl"
-            >
-            
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 to-white/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-              
-              <div className="relative">
-
-                <div className="mb-4 flex items-center justify-between">
-                  <h3 className="text-xl font-semibold text-gray-200">
-                    {feature.title}
-                  </h3>
-           
-                  <div className="inline-flex rounded-xl bg-gradient-to-br from-sky-500 via-purple-400 to-pink-400 p-3 shadow-lg">
-                    <Icon className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-
-         
-                <p className="text-sm leading-relaxed text-gray-300">
-                  {feature.description}
-                </p>
-              </div>
-            </div>
-          );
-        })}
+    <div className="w-full md:max-w-7xl mx-auto px-0 md:px-4 py-10">
+    
+      <div className="hidden md:grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {features.map((feature, index) => (
+          <FeatureCard key={index} title={feature.title} Icon={feature.icon} description={feature.description} />
+        ))}
       </div>
+
+
+      <div className="md:hidden relative flex w-full flex-col items-center justify-center overflow-hidden">
+        <Marquee pauseOnHover className="[--duration:20s]">
+          {features.map((feature, index) => (
+            <div key={index} className="mx-3 w-[85vw] flex-shrink-0">
+              <FeatureCard title={feature.title} Icon={feature.icon} description={feature.description} />
+            </div>
+          ))}
+        </Marquee>
+        <div
+          className="pointer-events-none absolute inset-y-0 left-0 w-1/3 z-10"
+          style={{
+            background:
+              "linear-gradient(to right, rgb(3 7 18) 0%, rgba(3, 7, 18, 0.8) 10%, transparent 50%)",
+            willChange: "auto",
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-y-0 right-0 w-1/3 z-10"
+          style={{
+            background:
+              "linear-gradient(to left, rgb(3 7 18) 0%, rgba(3, 7, 18, 0.8) 10%, transparent 50%)",
+            willChange: "auto",
+          }}
+        />
+      </div>
+      
     </div>
   );
 }

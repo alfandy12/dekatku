@@ -6,7 +6,10 @@ import SearchBar from '../ui/search';
 
 export default function Header() {
     return (
-        <div className="flex h-full flex-col items-center justify-start">
+        <div
+            id="home"
+            className="flex h-full flex-col items-center justify-start md:p-0"
+        >
             <div className="group m relative mx-auto mt-28 flex items-center justify-center rounded-full px-4 py-1.5 shadow-[inset_0_-8px_10px_#8fdfff1f] transition-shadow duration-500 ease-out hover:shadow-[inset_0_-5px_10px_#8fdfff3f]">
                 <span
                     className={cn(
@@ -28,8 +31,8 @@ export default function Header() {
                 </AnimatedGradientText>
                 <ChevronRight className="ml-1 size-4 stroke-neutral-500 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
             </div>
-            <div className="mt-10">
-                <h1 className="inter-700 text-5xl font-bold">
+            <div className="mt-10 px-1 md:px-0">
+                <h1 className="inter-700 text-center text-4xl font-bold md:text-5xl">
                     Jelajahi{' '}
                     <span className="bg-gradient-to-br from-sky-500 via-purple-500 to-pink-400 bg-clip-text font-black text-transparent">
                         UMKM
@@ -37,7 +40,7 @@ export default function Header() {
                     Sekitar Anda
                 </h1>
             </div>
-            <h3 className="inter-100 mb-3 text-3xl">
+            <h3 className="inter-100 mb-3 px-1 text-center text-lg md:px-0 md:text-3xl">
                 Dapatkan rekomendasi lokasi yang relevan untuk kebutuhan Anda.
             </h3>
             <SearchBar />
