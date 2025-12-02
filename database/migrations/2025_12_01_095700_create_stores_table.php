@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('stores', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('title');
-            $table->string('type');
-            $table->string('url_media');
+            $table->boolean('type', ['service', 'product']);
+            $table->string('thumbnail')->nullable();
             $table->geometry('location', 'point');
             $table->string('description');
             $table->timestamps();
