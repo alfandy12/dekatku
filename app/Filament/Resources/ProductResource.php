@@ -7,15 +7,23 @@ use Filament\Tables;
 use App\Models\Product;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
+use Illuminate\Support\Collection;
+use Filament\Tables\Filters\Filter;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -31,7 +39,6 @@ use App\Filament\Resources\ProductResource\Pages\CreateProduct;
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
-
     protected static ?string $navigationGroup = 'Toko Saya';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-group';
     protected static ?string $navigationLabel = 'Products';
@@ -40,39 +47,74 @@ class ProductResource extends Resource
     {
         return $form
             ->schema([
-                Section::make()
+                Section::make('Informasi Toko')
+                    ->description('Pilih toko atau cabang untuk produk ini')
                     ->schema([
-                        // get id otomatis
-                        // Select::make('store_id')
-                        //     ->relationship('store', 'title')
-                        //     ->required()
-                        //     ->searchable()
-                        //     ->preload(),
+                        Select::make('store_id')
+                            ->label('Toko atau Cabang')
+                            ->options(fn() => [
+                                Filament::getTenant()->id => Filament::getTenant()->title
+                            ])
+                            ->required()
+                            ->searchable()
+                            ->preload()
+                            ->placeholder('Pilih toko atau cabang Anda'),
+                    ])
+                    ->collapsible(),
 
+                Section::make('Detail Produk')
+                    ->description('Informasi dasar produk Anda')
+                    ->schema([
                         TextInput::make('title')
+                            ->label('Nama Produk')
                             ->required()
                             ->maxLength(255)
-                            ->columnSpan('full'),
+                            ->placeholder('Contoh: Sepatu Nike Air Max')
+                            ->columnSpanFull(),
 
+                        TextInput::make('price')
+                            ->label('Harga Produk')
+                            ->numeric()
+                            ->required()
+                            ->prefix('Rp')
+                            ->placeholder('100000')
+                            ->helperText('Masukkan harga tanpa titik atau koma'),
+
+                        Select::make('categories')
+                            ->label('Kategori Produk')
+                            ->relationship('categories', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->placeholder('Pilih satu atau lebih kategori')
+                            ->helperText('Anda dapat memilih lebih dari satu kategori'),
+                    ])
+                    ->columns(2)
+                    ->collapsible(),
+
+                Section::make('Media & Deskripsi')
+                    ->description('Upload gambar dan tulis deskripsi produk')
+                    ->schema([
                         FileUpload::make('url_media')
-                            ->label('Product Image')
+                            ->label('Gambar Produk')
                             ->image()
                             ->directory('products')
                             ->imageEditor()
-                            ->columnSpan('full'),
+                            ->maxSize(2048)
+                            ->helperText('Format: JPG, PNG. Maksimal 2MB')
+                            ->columnSpanFull(),
 
-                        TextInput::make('price')
-                            ->numeric()
-                            ->required()
-                            ->prefix('Rp'),
-
-                        Textarea::make('description')
-                            ->required()
-                            ->maxLength(500)
-                            ->columnSpan('full')
-                            ->rows(3),
+                        RichEditor::make('description')
+                            ->label('Deskripsi Produk')
+                            ->maxLength(1000)
+                            ->disableToolbarButtons([
+                                'attachFiles',
+                            ])
+                            ->placeholder('Jelaskan detail produk Anda...')
+                            ->helperText('Maksimal 1000 karakter')
+                            ->columnSpanFull(),
                     ])
-                    ->columns(2)
+                    ->collapsible(),
             ]);
     }
 
@@ -81,46 +123,165 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 ImageColumn::make('url_media')
-                    ->label('Image')
+                    ->label('Gambar')
                     ->circular()
-                    ->size(50),
+                    ->size(40)
+                    ->defaultImageUrl(url('/images/placeholder-product.png')),
 
                 TextColumn::make('title')
-                    ->label('Nama Product')
+                    ->label('Nama Produk')
                     ->searchable()
                     ->sortable()
-                    ->weight('medium'),
+                    ->weight('bold')
+                    ->wrap()
+                    ->limit(50)
+                    ->tooltip(function (TextColumn $column): ?string {
+                        $state = $column->getState();
+                        if (strlen($state) > 50) {
+                            return $state;
+                        }
+                        return null;
+                    }),
 
                 TextColumn::make('store.title')
-                    ->label('Nama Toko')
+                    ->label('Toko/Cabang')
                     ->searchable()
                     ->sortable()
+                    ->badge()
+                    ->color('info')
+                    ->icon('heroicon-o-building-storefront')
                     ->toggleable(),
 
                 TextColumn::make('price')
-                    ->label('Price')
+                    ->label('Harga')
                     ->money('IDR')
-                    ->sortable(),
+                    ->sortable()
+                    ->weight('semibold')
+                    ->color('success'),
+
+                TextColumn::make('categories.name')
+                    ->label('Kategori')
+                    ->badge()
+                    ->toggleable()
+                    ->wrap(),
+
                 TextColumn::make('description')
+                    ->label('Deskripsi')
+                    ->limit(50)
+                    ->html()
+                    ->tooltip(function (TextColumn $column): ?string {
+                        $state = $column->getState();
+                        if (strlen(strip_tags($state)) > 50) {
+                            return strip_tags($state);
+                        }
+                        return null;
+                    })
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('created_at')
+                    ->label('Dibuat')
+                    ->dateTime('d M Y, H:i')
+                    ->sortable()
+                    ->toggleable()
+                    ->color('gray'),
+
+                TextColumn::make('updated_at')
+                    ->label('Diperbarui')
+                    ->dateTime('d M Y, H:i')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->since()
+                    ->color('gray'),
             ])
             ->filters([
-                SelectFilter::make('store')
-                    ->relationship('store', 'title')
+                SelectFilter::make('store_id')
+                    ->label('Filter Toko')
+                    ->options(fn() => Auth::user()->stores()->pluck('title', 'id'))
                     ->searchable()
                     ->preload()
-                    ->multiple(),
+                    ->multiple()
+                    ->placeholder('Semua Toko'),
+                SelectFilter::make('categories')
+                    ->label('Filter Kategori')
+                    ->relationship('categories', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->multiple()
+                    ->placeholder('Semua Kategori'),
+
+                Filter::make('price_range')
+                    ->form([
+                        TextInput::make('price_from')
+                            ->label('Harga Minimum')
+                            ->numeric()
+                            ->prefix('Rp'),
+                        TextInput::make('price_to')
+                            ->label('Harga Maksimum')
+                            ->numeric()
+                            ->prefix('Rp'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['price_from'],
+                                fn(Builder $query, $price): Builder => $query->where('price', '>=', $price),
+                            )
+                            ->when(
+                                $data['price_to'],
+                                fn(Builder $query, $price): Builder => $query->where('price', '<=', $price),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['price_from'] ?? null) {
+                            $indicators[] = 'Harga dari: Rp ' . number_format($data['price_from'], 0, ',', '.');
+                        }
+                        if ($data['price_to'] ?? null) {
+                            $indicators[] = 'Harga sampai: Rp ' . number_format($data['price_to'], 0, ',', '.');
+                        }
+                        return $indicators;
+                    }),
             ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
+                ActionGroup::make([
+                    ViewAction::make()
+                        ->label('Lihat')
+                        ->icon('heroicon-o-eye'),
+
+                    EditAction::make()
+                        ->label('Edit')
+                        ->icon('heroicon-o-pencil'),
+
+                    DeleteAction::make()
+                        ->label('Hapus')
+                        ->icon('heroicon-o-trash')
+                        ->requiresConfirmation(),
+                ])
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->tooltip('Aksi'),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->label('Hapus yang dipilih')
+                        ->requiresConfirmation()
+                        ->deselectRecordsAfterCompletion(),
+
+                    BulkAction::make('updateStatus')
+                        ->label('Update Status')
+                        ->icon('heroicon-o-check-circle')
+                        ->requiresConfirmation(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc')
-            ->poll('30s');
+            ->poll('30s')
+            // ->persistSortInSession()
+            // ->persistSearchInSession()
+            // ->persistColumnSearchesInSession()
+            ->striped()
+            ->emptyStateHeading('Belum ada produk')
+            ->emptyStateDescription('Klik tombol "Buat Produk Baru" untuk menambahkan produk pertama Anda.')
+            ->emptyStateIcon('heroicon-o-shopping-bag');
     }
 
     public static function getRelations(): array
