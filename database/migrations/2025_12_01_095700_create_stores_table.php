@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('stores', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->boolean('type', ['service', 'product']);
-            $table->string('thumbnail')->nullable();
-            $table->geometry('location', 'point');
+            $table->string('type');
+            $table->string('url_media');
+            $table->geometry('location', 'point')->nullable();
             $table->string('description');
             $table->timestamps();
         });
