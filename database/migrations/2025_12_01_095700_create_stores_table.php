@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('type');
             $table->string('url_media');
-            $table->geometry('location', 'point');
+            $table->geometry('location', 'point')->nullable();
             $table->string('description');
             $table->timestamps();
         });
