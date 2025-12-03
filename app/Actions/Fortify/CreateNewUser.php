@@ -39,13 +39,13 @@ class CreateNewUser implements CreatesNewUsers
                 'name' => $input['name'],
                 'email' => $input['email'],
                 'password' => Hash::make($input['password']),
-                'role' => $input['role'],
+                'role' => 'user'
             ]);
 
             $defaultStoreName = $input['name'] . "'s Store";
             $store = Store::create([
                 'title' => $defaultStoreName,
-                'type' => 'general',
+                'type' => 'product',
                 'slug' => Str::slug($defaultStoreName) . '-' . Str::random(6),
                 'url_media' => 'https://images.unsplash.com/photo-1441986300917-64674bd600d8',
                 'location' => 'Indonesia',

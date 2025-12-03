@@ -16,4 +16,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 
+// Route::middleware(['auth', 'verified'])->get('dashboard', function () {
+//     return redirect('/console');
+// })->name('dashboard');
+
 require __DIR__ . '/settings.php';
