@@ -2,7 +2,7 @@ import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
+import { Input, PasswordInput } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/auth-layout';
@@ -24,8 +24,8 @@ export default function Login({
 }: LoginProps) {
     return (
         <AuthLayout
-            title="Log in to your account"
-            description="Enter your email and password below to log in"
+            title="Login ke akun mu"
+            description="Masukan email dan password untuk login"
         >
             <Head title="Log in" />
 
@@ -36,9 +36,14 @@ export default function Login({
             >
                 {({ processing, errors }) => (
                     <>
-                        <div className="grid gap-6">
+                        <div className="grid gap-5">
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                                <Label
+                                    htmlFor="email"
+                                    className="font-medium text-gray-200"
+                                >
+                                    Email Address
+                                </Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -48,33 +53,37 @@ export default function Login({
                                     tabIndex={1}
                                     autoComplete="email"
                                     placeholder="email@example.com"
+                                    className="border-gray-700 bg-gray-800/50 text-white placeholder:text-gray-500 focus-visible:border-purple-400 focus-visible:ring-purple-400/30"
                                 />
                                 <InputError message={errors.email} />
                             </div>
 
                             <div className="grid gap-2">
-                                <div className="flex items-center">
-                                    <Label htmlFor="password">Password</Label>
-                                    {canResetPassword && (
-                                        <TextLink
-                                            href={request()}
-                                            className="ml-auto text-sm"
-                                            tabIndex={5}
-                                        >
-                                            Forgot password?
-                                        </TextLink>
-                                    )}
-                                </div>
-                                <Input
+                                <Label
+                                    htmlFor="password"
+                                    className="font-medium text-gray-200"
+                                >
+                                    Password
+                                </Label>
+                                <PasswordInput
                                     id="password"
-                                    type="password"
                                     name="password"
                                     required
                                     tabIndex={2}
                                     autoComplete="current-password"
-                                    placeholder="Password"
+                                    placeholder="Enter your password"
+                                    className="border-gray-700 bg-gray-800/50 text-white placeholder:text-gray-500 focus-visible:border-purple-400 focus-visible:ring-purple-400/30"
                                 />
                                 <InputError message={errors.password} />
+                                {canResetPassword && (
+                                    <TextLink
+                                        href={request()}
+                                        className="text-sm text-purple-400 transition-colors hover:text-purple-300"
+                                        tabIndex={5}
+                                    >
+                                        Forgot password?
+                                    </TextLink>
+                                )}
                             </div>
 
                             <div className="flex items-center space-x-3">
@@ -82,28 +91,40 @@ export default function Login({
                                     id="remember"
                                     name="remember"
                                     tabIndex={3}
+                                    className="border-gray-600 data-[state=checked]:border-purple-500 data-[state=checked]:bg-purple-500"
                                 />
-                                <Label htmlFor="remember">Remember me</Label>
+                                <Label
+                                    htmlFor="remember"
+                                    className="cursor-pointer font-normal text-gray-300"
+                                >
+                                    Remember me for 30 days
+                                </Label>
                             </div>
 
                             <Button
                                 type="submit"
-                                className="mt-4 w-full"
+                                className="mt-2 h-11 w-full bg-gradient-to-r from-purple-500 to-pink-500 font-semibold text-white shadow-lg shadow-purple-500/30 transition-all duration-300 hover:from-purple-600 hover:to-pink-600"
                                 tabIndex={4}
                                 disabled={processing}
                                 data-test="login-button"
                             >
-                                {processing && <Spinner />}
-                                Log in
+                                {processing && <Spinner className="mr-2" />}
+                                {processing ? 'Signing in...' : 'Sign in'}
                             </Button>
                         </div>
 
                         {canRegister && (
-                            <div className="text-center text-sm text-muted-foreground">
-                                Don't have an account?{' '}
-                                <TextLink href={register()} tabIndex={5}>
-                                    Sign up
-                                </TextLink>
+                            <div className="border-t border-gray-700/50 pt-4 text-center">
+                                <p className="text-sm text-gray-400">
+                                    Tidak memiliki akun?{' '}
+                                    <TextLink
+                                        href={register()}
+                                        tabIndex={5}
+                                        className="font-medium text-purple-400 transition-colors hover:text-purple-300"
+                                    >
+                                        Sign up now
+                                    </TextLink>
+                                </p>
                             </div>
                         )}
                     </>

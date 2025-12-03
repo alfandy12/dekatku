@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 export default function Welcome() {
     const [showBackground, setShowBackground] = useState(true);
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
     const [lineCount] = useState<number[]>(
         isMobile ? [30, 20, 12] : [10, 15, 12],
     );

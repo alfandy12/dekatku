@@ -1,4 +1,5 @@
-import { Link } from '@inertiajs/react';
+import { SharedData } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
 import { MapPin, Menu } from 'lucide-react';
 import { useState } from 'react';
 import {
@@ -11,6 +12,7 @@ import {
 import GradientButton from './ui/gradient-button';
 
 export default function Navbar() {
+    const { auth } = usePage<SharedData>().props;
     const [open, setOpen] = useState(false);
 
     return (
@@ -43,18 +45,30 @@ export default function Navbar() {
                         UMKM Terdekat
                     </a>
                     <div className="flex items-center space-x-2.5">
-                        <Link
-                            href={'/login'}
-                            className="inter-500 rounded-4xl border-t-2 border-l-2 border-t-white/10 border-l-white/10 px-4 py-2 text-white backdrop-blur-md transition-all hover:bg-white/10"
-                        >
-                            Login
-                        </Link>
-                        <Link
-                            href={'/register'}
-                            className="inter-500 rounded-4xl border-t-2 border-l-2 border-t-white/10 border-l-white/10 px-4 py-2 text-white transition-all hover:bg-white/10"
-                        >
-                            Register
-                        </Link>
+                        {auth.user ? (
+                            <Link
+                                href={'/dashboard'}
+                                className="inter-500 rounded-4xl border-t-2 border-l-2 border-t-white/10 border-l-white/10 px-4 py-2 text-white transition-all hover:bg-white/10"
+                            >
+                                Dashboard
+                            </Link>
+                        ) : (
+                            <>
+                                <Link
+                                    href={'/login'}
+                                    className="inter-500 rounded-4xl border-t-2 border-l-2 border-t-white/10 border-l-white/10 px-4 py-2 text-white backdrop-blur-md transition-all hover:bg-white/10"
+                                >
+                                    Login
+                                </Link>
+                                <Link
+                                    href={'/register'}
+                                    className="inter-500 rounded-4xl border-t-2 border-l-2 border-t-white/10 border-l-white/10 px-4 py-2 text-white transition-all hover:bg-white/10"
+                                >
+                                    Register
+                                </Link>
+                            </>
+                        )}
+
                         <GradientButton className="px-4 py-2">
                             <Link href="/explore">Jelajahi UMKM</Link>
                         </GradientButton>
@@ -100,18 +114,30 @@ export default function Navbar() {
                             </div>
 
                             <div className="space-y-3 border-t border-white/10 pt-6">
-                                <Link
-                                    href={'/login'}
-                                    className="block rounded-lg border border-white/20 bg-white/5 px-4 py-3 text-center text-white backdrop-blur-md transition-all hover:bg-white/10"
-                                >
-                                    Login
-                                </Link>
-                                <Link
-                                    href={'/register'}
-                                    className="block rounded-lg border border-white/20 bg-white/5 px-4 py-3 text-center text-white backdrop-blur-md transition-all hover:bg-white/10"
-                                >
-                                    Register
-                                </Link>
+                                {auth.user ? (
+                                    <Link
+                                        href={'/register'}
+                                        className="block rounded-lg border border-white/20 bg-white/5 px-4 py-3 text-center text-white backdrop-blur-md transition-all hover:bg-white/10"
+                                    >
+                                        Dashboard
+                                    </Link>
+                                ) : (
+                                    <>
+                                        <Link
+                                            href={'/login'}
+                                            className="block rounded-lg border border-white/20 bg-white/5 px-4 py-3 text-center text-white backdrop-blur-md transition-all hover:bg-white/10"
+                                        >
+                                            Login
+                                        </Link>
+                                        <Link
+                                            href={'/register'}
+                                            className="block rounded-lg border border-white/20 bg-white/5 px-4 py-3 text-center text-white backdrop-blur-md transition-all hover:bg-white/10"
+                                        >
+                                            Register
+                                        </Link>
+                                    </>
+                                )}
+
                                 <Link href="/explore">
                                     <GradientButton className="w-full px-4 py-3">
                                         Jelajahi UMKM

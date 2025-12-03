@@ -10,8 +10,8 @@ import {
 
 export default function Footer() {
     return (
-        <footer className="w-full border-t border-white/10">
-            <div className="w-full px-4 py-12 md:px-6">
+        <footer className="flex w-full items-center justify-center border-t border-white/10">
+            <div className="w-full max-w-7xl px-4 py-12 md:px-6">
                 <div className="grid gap-8 md:grid-cols-4">
                     <div className="md:col-span-2">
                         <h3 className="inter-700 mb-3 bg-gradient-to-br from-sky-500 via-purple-400 to-pink-500 bg-clip-text text-2xl font-bold text-transparent">
