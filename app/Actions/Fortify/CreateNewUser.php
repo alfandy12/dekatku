@@ -3,8 +3,11 @@
 namespace App\Actions\Fortify;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Validator;
+use App\Models\Store;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
 class CreateNewUser implements CreatesNewUsers
@@ -30,10 +33,27 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
-        return User::create([
-            'name' => $input['name'],
-            'email' => $input['email'],
-            'password' => $input['password'],
-        ]);
+        return DB::transaction(function () use ($input) {
+            $user = User::create([
+                'name' => $input['name'],
+                'email' => $input['email'],
+                'password' => $input['password'],
+                'role' => $input['role'],
+            ]);
+
+            $defaultStoreName = $input['name'] . "'s Store";
+            $store = Store::create([
+                'title' => $defaultStoreName,
+                'type' => 'general',
+                'slug' => Str::slug($defaultStoreName) . '-' . Str::random(6),
+                'url_media' => 'https://images.unsplash.com/photo-1441986300917-64674bd600d8',
+                'location' => 'Indonesia',
+                'desk' => 'Welcome to ' . $defaultStoreName . '! Start managing your products and grow your business.',
+            ]);
+
+            $user->stores()->attach($store->id,);
+
+            return $user;
+        });
     }
 }
