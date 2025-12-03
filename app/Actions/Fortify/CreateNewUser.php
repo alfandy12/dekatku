@@ -7,6 +7,7 @@ use App\Models\Store;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
@@ -37,7 +38,7 @@ class CreateNewUser implements CreatesNewUsers
             $user = User::create([
                 'name' => $input['name'],
                 'email' => $input['email'],
-                'password' => $input['password'],
+                'password' => Hash::make($input['password']),
                 'role' => $input['role'],
             ]);
 
@@ -48,7 +49,7 @@ class CreateNewUser implements CreatesNewUsers
                 'slug' => Str::slug($defaultStoreName) . '-' . Str::random(6),
                 'url_media' => 'https://images.unsplash.com/photo-1441986300917-64674bd600d8',
                 'location' => 'Indonesia',
-                'desk' => 'Welcome to ' . $defaultStoreName . '! Start managing your products and grow your business.',
+                'description' => 'Welcome to ' . $defaultStoreName . '! Start managing your products and grow your business.',
             ]);
 
             $user->stores()->attach($store->id,);

@@ -10,10 +10,5 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return redirect()->to('/admin');
-    })->name('dashboard');
-});
 
 require __DIR__ . '/settings.php';
