@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
-            $table->boolean('type', ['service', 'product']);
+            $table->enum('type', ['service', 'product']);
             $table->string('url_media');
             $table->json('location')->nullable();
             $table->string('description');
