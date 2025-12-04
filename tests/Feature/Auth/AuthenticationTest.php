@@ -10,16 +10,18 @@ test('login screen can be rendered', function () {
     $response->assertStatus(200);
 });
 
-test('users can authenticate using the login screen', function () {
-    $user = User::factory()->withoutTwoFactor()->create();
 
-    $response = $this->post(route('login.store'), [
+test('users can authenticate using the login screen', function () {
+    $user = User::factory()->create();
+
+    $response = $this->post('/login', [
         'email' => $user->email,
         'password' => 'password',
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+
+    $response->assertRedirect('/console'); 
 });
 
 test('users with two factor enabled are redirected to two factor challenge', function () {

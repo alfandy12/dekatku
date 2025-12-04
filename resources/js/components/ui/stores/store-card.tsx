@@ -25,7 +25,7 @@ const StoreCard = memo(({ store, index }: StoreCardProps) => {
     return (
         <div
             className="group relative cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/0 p-6 backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:bg-white/10"
-           
+            style={{ animationDelay: `${index * 0.1}s` }}
         >
           
             <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-gradient-to-br from-sky-500/10 via-purple-400/10 to-pink-500/10 blur-3xl transition-all duration-500 group-hover:scale-150" />
