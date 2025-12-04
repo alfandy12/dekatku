@@ -43,7 +43,7 @@ export default function Header() {
             <h3 className="inter-100 mb-3 px-1 text-center text-lg md:px-0 md:text-3xl">
                 Dapatkan rekomendasi lokasi yang relevan untuk kebutuhan Anda.
             </h3>
-            <SearchBar />
+            <SearchBar inputStyle="py-5" className="mt-5 px-2.5 md:px-0" />
             <FeatureCards />
         </div>
     );

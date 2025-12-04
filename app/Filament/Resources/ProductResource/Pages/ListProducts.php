@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ProductResource\Pages;
 
+use Carbon\Carbon;
 use Filament\Actions;
 use App\Models\Product;
 use Filament\Facades\Filament;
@@ -37,32 +38,36 @@ class ListProducts extends ListRecords
 
     public function getTabs(): array
     {
-        $getStore = Filament::getTenant();
+        $storeId = Filament::getTenant()->id;
 
-        $products = Product::where('store_id', $getStore->id)->get();
+        $baseQuery = Product::query()->where('store_id', $storeId);
+
+        $threeDaysAgo = Carbon::now()->subDays(3);
+        $highPriceThreshold = 1000000;
+        $lowPriceThreshold = 100000;
 
         return [
             'semua' => Tab::make('Semua Produk')
                 ->icon('heroicon-o-square-3-stack-3d')
-                ->badge(fn() => Product::where('store_id', $getStore->id)->count())
+                ->badge(fn() => $baseQuery->count())
                 ->badgeColor('primary'),
 
             'terbaru' => Tab::make('Produk Terbaru')
                 ->icon('heroicon-o-sparkles')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('created_at', '>=', now()->subDays(3)))
-                ->badge(fn() => $products->where('created_at', '>=', now()->subDays(3))->count())
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('created_at', '>=', $threeDaysAgo))
+                ->badge(fn() => (clone $baseQuery)->where('created_at', '>=', $threeDaysAgo)->count())
                 ->badgeColor('warning'),
 
             'harga_tinggi' => Tab::make('Harga Tinggi')
                 ->icon('heroicon-o-arrow-trending-up')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('price', '>=', 1000000))
-                ->badge(fn() => $products->where('price', '>=', 50000)->count())
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('price', '>=', $highPriceThreshold))
+                ->badge(fn() => (clone $baseQuery)->where('price', '>=', $highPriceThreshold)->count())
                 ->badgeColor('danger'),
 
             'harga_rendah' => Tab::make('Harga Rendah')
                 ->icon('heroicon-o-arrow-trending-down')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('price', '<', 100000))
-                ->badge(fn() => $products->where('price', '<', 50000)->count())
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('price', '<', $lowPriceThreshold))
+                ->badge(fn() => (clone $baseQuery)->where('price', '<', $lowPriceThreshold)->count())
                 ->badgeColor('info'),
         ];
     }
