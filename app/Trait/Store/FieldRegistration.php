@@ -63,33 +63,29 @@ trait FieldRegistration
                 ->image()
                 ->imageEditor()
                 ->minSize(128)
-                ->maxSize(2048)
+                ->maxSize(4096)
                 ->downloadable()
                 ->required()
                 ->saveUploadedFileUsing(function (TemporaryUploadedFile $file, $component) {
                     $manager = new ImageManager(new Driver());
+
                     $filePath = $file->getRealPath();
                     $image = $manager->read($filePath);
-                    $width = $image->width();
-                    $height = $image->height();
-                    $ratio = $width / $height;
+
                     $targetSize = 500;
-                    if ($ratio > 1) {
-                        $newWidth = $targetSize;
-                        $newHeight = intval($targetSize / $ratio);
-                    } else {
-                        $newWidth = intval($targetSize * $ratio);
-                        $newHeight = $targetSize;
+
+                    if ($image->width() > $targetSize || $image->height() > $targetSize) {
+                        $image->scaleDown($targetSize);
                     }
-                    $image->resize($newWidth, $newHeight);
+
                     $image->sharpen(8);
-                    $canvas = $manager->create($targetSize, $targetSize)->fill('transparent');
-                    $canvas->place($image, 'center');
-                    $encoded = $canvas->encodeByExtension('png');
+
+                    $encoded = $image->encodeByExtension('png');
                     $fileName = "logo.png";
                     $directory = $component->getDirectory();
                     $path = "{$directory}/{$fileName}";
                     Storage::disk('public')->put($path, (string) $encoded, 'public');
+
                     return $path;
                 }),
 

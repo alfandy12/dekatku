@@ -47,21 +47,6 @@ class ProductResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Informasi Toko')
-                    ->description('Pilih toko atau cabang untuk produk ini')
-                    ->schema([
-                        Select::make('store_id')
-                            ->label('Toko / Cabang')
-                            ->options([
-                                Filament::getTenant()->id => Filament::getTenant()->title
-
-                            ])
-                            ->default(fn() => Filament::getTenant()->id)
-                            ->disabled()
-                            ->dehydrated()
-                            ->required(),
-                    ])
-                    ->collapsible(),
 
                 Section::make('Detail Produk')
                     ->description('Informasi dasar produk Anda')
@@ -88,7 +73,12 @@ class ProductResource extends Resource
                             ->preload()
                             ->searchable()
                             ->placeholder('Pilih satu atau lebih kategori')
-                            ->helperText('Anda dapat memilih lebih dari satu kategori'),
+                            ->helperText('Anda dapat memilih lebih dari satu kategori')
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('name')
+                                    ->label('Nama Kategori')
+                                    ->required(),
+                            ]),
                     ])
                     ->columns(2)
                     ->collapsible(),
@@ -143,15 +133,6 @@ class ProductResource extends Resource
                         }
                         return null;
                     }),
-
-                TextColumn::make('store.title')
-                    ->label('Toko/Cabang')
-                    ->searchable()
-                    ->sortable()
-                    ->badge()
-                    ->color('info')
-                    ->icon('heroicon-o-building-storefront')
-                    ->toggleable(),
 
                 TextColumn::make('price')
                     ->label('Harga')

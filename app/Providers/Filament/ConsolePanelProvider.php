@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Tenancy\EditStoreProfile;
 use Filament\Pages;
 use Filament\Panel;
 use App\Models\Store;
@@ -61,7 +62,8 @@ class ConsolePanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->tenant(Store::class,  slugAttribute: 'slug')
-            ->simplePageMaxContentWidth(MaxWidth::FourExtraLarge)
-            ->tenantRegistration(RegisterStore::class);
+            ->tenantProfile(EditStoreProfile::class)
+            ->tenantRegistration(RegisterStore::class)
+            ->simplePageMaxContentWidth(MaxWidth::FourExtraLarge);
     }
 }
