@@ -1,16 +1,17 @@
 import FloatingLines from '@/components/FloatingLines';
+import HomeNavbar from '@/components/home-navbar';
 import About from '@/components/home/about';
 import CallToAction from '@/components/home/call-to-action';
 import Footer from '@/components/home/footer';
 import Header from '@/components/home/header';
 import Store from '@/components/home/store';
-import Navbar from '@/components/navbar';
 import { Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
 export default function Welcome() {
     const [showBackground, setShowBackground] = useState(true);
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
     const [lineCount] = useState<number[]>(
         isMobile ? [30, 20, 12] : [10, 15, 12],
     );
@@ -63,13 +64,13 @@ export default function Welcome() {
 
                 <div className="relative z-10">
                     <div className="flex w-full justify-center md:min-h-screen">
-                        <Navbar />
+                        <HomeNavbar />
                         <div className="w-full max-w-7xl md:p-3">
                             <Header />
                         </div>
                     </div>
 
-                    <div className="w-full">
+                    <div className="w-full bg-zinc-950!">
                         <div className="mx-auto w-full max-w-7xl p-2 md:p-3">
                             <About />
                             <Store />

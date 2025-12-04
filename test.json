@@ -2,53 +2,16 @@
     "id": 1,
     "nama_toko": "Toko kain songket",
     "description": "Lorem ipsum dolor sit amet",
-    "cabang": [
-        {
-            "id": 1,
-            "title": "cabang 1",
-            "gmaps": "https://maps.google.com/w34r48rj",
-            "usaha_id": 1
-        },
-        {
-            "id": 2,
-            "title": "cabang 1",
-            "gmaps": "https://maps.google.com/w5468rj",
-            "usaha_id": 1
-        }
-    ],
+    "jarak": "878m",
     "product": [
         {
             "id": 1,
-            "image": "foto-product.jpeg",
-            "title": "Kain Songket A",
-            "price": 50000,
-            "usaha_id": 1,
-            "cabang_tersedia": [
-                {
-                    "id": 1,
-                    "cabang_id": 1,
-                    "title": "cabang 1"
-                },
-                {
-                    "id": 2,
-                    "cabang_id": 1,
-                    "title": "cabang 2"
-                }
-            ]
+            "image": "foto-product.jpeg"
         },
         {
             "id": 2,
             "image": "foto-product-2.jpeg",
-            "title": "Kain Songket B",
-            "price": 20000,
-            "usaha_id": 1,
-            "cabang_tersedia": [
-                {
-                    "id": 1,
-                    "cabang_id": 1,
-                    "title": "cabang 1"
-                }
-            ]
+            "title": "Kain Songket B"
         }
     ]
 }

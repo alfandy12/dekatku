@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('stores', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('title');
-            $table->string('type');
+            $table->string('slug')->unique();
+            $table->enum('type', ['service', 'product'])->default('product');
             $table->string('url_media');
-            $table->geometry('location', 'point');
+            $table->json('location')->nullable();
             $table->string('description');
             $table->timestamps();
         });
