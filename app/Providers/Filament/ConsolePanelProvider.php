@@ -11,6 +11,7 @@ use Filament\Facades\Filament;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Facades\Auth;
 use Filament\Http\Middleware\Authenticate;
 use App\Filament\Pages\Tenancy\RegisterStore;
 use Illuminate\Session\Middleware\StartSession;
@@ -27,6 +28,7 @@ use BezhanSalleh\FilamentShield\Middleware\SyncShieldTenant;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
 use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class ConsolePanelProvider extends PanelProvider
 {
@@ -36,6 +38,7 @@ class ConsolePanelProvider extends PanelProvider
             ->default()
             ->id('console')
             ->path('console')
+            ->emailVerification()
             ->colors([
                 'primary' => Color::Blue,
             ])
@@ -73,7 +76,7 @@ class ConsolePanelProvider extends PanelProvider
             ->simplePageMaxContentWidth(MaxWidth::FourExtraLarge)
             ->sidebarCollapsibleOnDesktop()
             ->plugins([
-                  FilamentShieldPlugin::make()
+                FilamentShieldPlugin::make()
                     ->gridColumns([
                         'default' => 1,
                         'sm' => 2,
@@ -90,6 +93,7 @@ class ConsolePanelProvider extends PanelProvider
                         'sm' => 2,
                     ]),
                 FilamentEditProfilePlugin::make()
+                    ->shouldShowTwoFactorAuthenticationForm()
                     ->slug('my-profile')
                     ->setTitle('My Profile')
                     ->setNavigationLabel('My Profile')
@@ -107,7 +111,7 @@ class ConsolePanelProvider extends PanelProvider
             ], isPersistent: true)
             ->userMenuItems([
                 'profile' => MenuItem::make()
-                    ->label(fn() => auth()->user()->name)
+                    ->label(fn() => Auth::user()->name)
                     ->url(fn(): string => EditProfilePage::getUrl())
                     ->icon('heroicon-m-user-circle')
                     ->visible(function (): bool {
