@@ -15,6 +15,8 @@ use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Contracts\LoginResponse;
 use App\Http\Responses\LoginResponse as CustomLoginResponse;
 use Laravel\Fortify\Contracts\RegisterResponse;
+use App\Http\Responses\CustomRegisterResponse;
+
 class FortifyServiceProvider extends ServiceProvider
 {
     /**
@@ -23,6 +25,7 @@ class FortifyServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(LoginResponse::class, CustomLoginResponse::class);
+        $this->app->singleton(RegisterResponse::class, CustomRegisterResponse::class);
     }
 
     /**
@@ -33,12 +36,6 @@ class FortifyServiceProvider extends ServiceProvider
         $this->configureActions();
         $this->configureViews();
         $this->configureRateLimiting();
-        $this->app->instance(RegisterResponse::class, new class implements RegisterResponse {
-            public function toResponse($request)
-            {
-                return redirect()->intended('/console');
-            }
-        });
     }
 
     /**
