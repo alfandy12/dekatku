@@ -28,7 +28,6 @@ class ConsolePanelProvider extends PanelProvider
             ->default()
             ->id('console')
             ->path('console')
-            ->login()
             ->colors([
                 'primary' => Color::Blue,
             ])
