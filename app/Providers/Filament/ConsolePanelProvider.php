@@ -7,6 +7,7 @@ use Filament\Panel;
 use App\Models\Store;
 use Filament\Widgets;
 use Filament\PanelProvider;
+use Filament\Facades\Filament;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
@@ -89,7 +90,7 @@ class ConsolePanelProvider extends PanelProvider
                     ->url(fn(): string => EditProfilePage::getUrl())
                     ->icon('heroicon-m-user-circle')
                     ->visible(function (): bool {
-                        return auth()->user()->stores()->exists();
+                        return Filament::getTenant() !== null;
                     }),
             ]);
     }
