@@ -268,7 +268,6 @@ class ProductResource extends Resource
                 ]),
             ])
             ->defaultSort('created_at', 'desc')
-            ->poll('30s')
             ->persistSortInSession()
             ->persistSearchInSession()
             ->persistColumnSearchesInSession()
@@ -292,5 +291,11 @@ class ProductResource extends Resource
             'create' => CreateProduct::route('/create'),
             'edit' => EditProduct::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->with(['store', 'categories']);
     }
 }

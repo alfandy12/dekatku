@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\RateLimiter;
 use Laravel\Fortify\Contracts\RegisterResponse;
 use Laravel\Fortify\Contracts\LoginResponse;
 use App\Http\Responses\LoginResponse as CustomLoginResponse;
-use Laravel\Fortify\Contracts\RegisterResponse;
 use App\Http\Responses\CustomRegisterResponse;
 
 class FortifyServiceProvider extends ServiceProvider
