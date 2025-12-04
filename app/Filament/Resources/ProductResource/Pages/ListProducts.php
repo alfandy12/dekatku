@@ -20,7 +20,7 @@ class ListProducts extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Buat Produk Baru')
+                ->label('Tambah Produk Baru')
                 ->icon('heroicon-o-plus-circle')
                 ->color('success')
                 ->modalHeading('Tambah Produk Baru')
@@ -37,29 +37,32 @@ class ListProducts extends ListRecords
 
     public function getTabs(): array
     {
+        $getStore = Filament::getTenant();
+
+        $products = Product::where('store_id', $getStore->id)->get();
 
         return [
             'semua' => Tab::make('Semua Produk')
                 ->icon('heroicon-o-square-3-stack-3d')
-                ->badge(fn() => Product::where('store_id', Filament::getTenant()->id)->count())
+                ->badge(fn() => Product::where('store_id', $getStore->id)->count())
                 ->badgeColor('primary'),
 
             'terbaru' => Tab::make('Produk Terbaru')
                 ->icon('heroicon-o-sparkles')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('created_at', '>=', now()->subDays(7)))
-                ->badge(fn() => Product::where('created_at', '>=', now()->subDays(7))->count())
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('created_at', '>=', now()->subDays(3)))
+                ->badge(fn() => $products->where('created_at', '>=', now()->subDays(3))->count())
                 ->badgeColor('warning'),
 
             'harga_tinggi' => Tab::make('Harga Tinggi')
                 ->icon('heroicon-o-arrow-trending-up')
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('price', '>=', 1000000))
-                ->badge(fn() => Product::where('price', '>=', 1000000)->count())
+                ->badge(fn() => $products->where('price', '>=', 50000)->count())
                 ->badgeColor('danger'),
 
             'harga_rendah' => Tab::make('Harga Rendah')
                 ->icon('heroicon-o-arrow-trending-down')
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('price', '<', 100000))
-                ->badge(fn() => Product::where('price', '<', 100000)->count())
+                ->badge(fn() => $products->where('price', '<', 50000)->count())
                 ->badgeColor('info'),
         ];
     }

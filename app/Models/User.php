@@ -83,5 +83,4 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     {
         return $tenant->title;
     }
-    
 }

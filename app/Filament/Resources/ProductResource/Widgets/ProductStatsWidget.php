@@ -18,17 +18,18 @@ class ProductStatsWidget extends BaseWidget
 
         $totalProducts = $products->count();
 
-        $totalValue = Product::sum('price');
-        $avgPrice = Product::avg('price');
+        $totalValue = $products->sum('price');
 
-        $lastMonthProducts = Product::where('created_at', '>=', now()->subMonth())->count();
+        $avgPrice = $products->avg('price');
+
+        $lastMonthProducts = $products->where('created_at', '>=', now()->subMonth())->count();
 
         return [
             Stat::make('Total Produk', number_format($totalProducts, 0, ',', '.'))
                 ->description('Semua produk di sistem')
                 ->descriptionIcon('heroicon-m-square-3-stack-3d')
                 ->color('primary')
-                ->chart([7, 12, 15, 18, 22, 25, $totalProducts]),
+                ->chart([3, 7, 11, 17, 27, 39, $totalProducts]),
 
             Stat::make('Total Nilai Produk', 'Rp ' . number_format($totalValue, 0, ',', '.'))
                 ->description('Nilai keseluruhan inventori')
@@ -44,7 +45,7 @@ class ProductStatsWidget extends BaseWidget
                 ->description('30 hari terakhir')
                 ->descriptionIcon('heroicon-m-calendar')
                 ->color('primary')
-                ->chart([10, 15, 20, 22, 25, 27, $lastMonthProducts]),
+                ->chart([5, 10, 15, 25, 35, 50, $lastMonthProducts]),
         ];
     }
 

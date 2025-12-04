@@ -51,14 +51,15 @@ class ProductResource extends Resource
                     ->description('Pilih toko atau cabang untuk produk ini')
                     ->schema([
                         Select::make('store_id')
-                            ->label('Toko atau Cabang')
-                            ->options(fn() => [
+                            ->label('Toko / Cabang')
+                            ->options([
                                 Filament::getTenant()->id => Filament::getTenant()->title
+
                             ])
-                            ->required()
-                            ->searchable()
-                            ->preload()
-                            ->placeholder('Pilih toko atau cabang Anda'),
+                            ->default(fn() => Filament::getTenant()->id)
+                            ->disabled()
+                            ->dehydrated()
+                            ->required(),
                     ])
                     ->collapsible(),
 
@@ -194,13 +195,6 @@ class ProductResource extends Resource
                     ->color('gray'),
             ])
             ->filters([
-                SelectFilter::make('store_id')
-                    ->label('Filter Toko')
-                    ->options(fn() => Auth::user()->stores()->pluck('title', 'id'))
-                    ->searchable()
-                    ->preload()
-                    ->multiple()
-                    ->placeholder('Semua Toko'),
                 SelectFilter::make('categories')
                     ->label('Filter Kategori')
                     ->relationship('categories', 'name')
@@ -275,9 +269,9 @@ class ProductResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->poll('30s')
-            // ->persistSortInSession()
-            // ->persistSearchInSession()
-            // ->persistColumnSearchesInSession()
+            ->persistSortInSession()
+            ->persistSearchInSession()
+            ->persistColumnSearchesInSession()
             ->striped()
             ->emptyStateHeading('Belum ada produk')
             ->emptyStateDescription('Klik tombol "Buat Produk Baru" untuk menambahkan produk pertama Anda.')

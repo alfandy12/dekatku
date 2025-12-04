@@ -46,6 +46,10 @@ export default function Navbar() {
                     </a>
                     <div className="flex items-center space-x-2.5">
                         {auth.user ? (
+                            // <a href="/dashboard">
+                            //     Dashboard
+
+                            // </a>
                             <Link
                                 href={'/dashboard'}
                                 className="inter-500 rounded-4xl border-t-2 border-l-2 border-t-white/10 border-l-white/10 px-4 py-2 text-white transition-all hover:bg-white/10"
