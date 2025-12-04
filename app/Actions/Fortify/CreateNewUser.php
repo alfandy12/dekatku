@@ -42,18 +42,6 @@ class CreateNewUser implements CreatesNewUsers
                 'role' => 'user'
             ]);
 
-            $defaultStoreName = $input['name'] . "'s Store";
-            $store = Store::create([
-                'title' => $defaultStoreName,
-                'type' => 'product',
-                'slug' => Str::slug($defaultStoreName) . '-' . Str::random(6),
-                'url_media' => 'https://images.unsplash.com/photo-1441986300917-64674bd600d8',
-                'location' => 'Indonesia',
-                'description' => 'Welcome to ' . $defaultStoreName . '! Start managing your products and grow your business.',
-            ]);
-
-            $user->stores()->attach($store->id,);
-
             return $user;
         });
     }

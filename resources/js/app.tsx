@@ -24,8 +24,9 @@ createInertiaApp({
             </StrictMode>,
         );
     },
+
     progress: {
-        color: '#4B5563',
+        color: '#7f22fe',
     },
 });
 

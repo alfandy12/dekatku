@@ -13,13 +13,17 @@ use Illuminate\Cache\RateLimiting\Limit;
 use App\Actions\Fortify\ResetUserPassword;
 use Illuminate\Support\Facades\RateLimiter;
 use Laravel\Fortify\Contracts\RegisterResponse;
-
+use Laravel\Fortify\Contracts\LoginResponse;
+use App\Http\Responses\LoginResponse as CustomLoginResponse;
 class FortifyServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
      */
-    public function register(): void {}
+    public function register(): void
+    {
+         $this->app->singleton(LoginResponse::class, CustomLoginResponse::class);
+    }
 
     /**
      * Bootstrap any application services.
@@ -29,6 +33,12 @@ class FortifyServiceProvider extends ServiceProvider
         $this->configureActions();
         $this->configureViews();
         $this->configureRateLimiting();
+        $this->app->instance(RegisterResponse::class, new class implements RegisterResponse {
+            public function toResponse($request)
+            {
+                return redirect()->intended('/console');
+            }
+        });
     }
 
     /**
