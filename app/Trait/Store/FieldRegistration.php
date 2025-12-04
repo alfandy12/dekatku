@@ -21,19 +21,22 @@ trait FieldRegistration
     public static function formFields(): array
     {
         return [
-            TextInput::make('title')
-                ->required()
-                ->label('Name')
-                ->maxLength(255)
-                ->live(onBlur: true)
-                ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
+            Grid::make(2)
+                ->schema([
+                    TextInput::make('title')
+                        ->required()
+                        ->label('Name')
+                        ->maxLength(255)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
-            TextInput::make('slug')
-                ->required()
-                ->label('Slug')
-                ->maxLength(255)
-                ->helperText('A unique identifier for your store, used in URLs.')
-                ->unique(table: 'stores', ignorable: fn($record) => $record),
+                    TextInput::make('slug')
+                        ->required()
+                        ->label('Slug')
+                        ->maxLength(255)
+                        ->helperText('A unique identifier for your store, used in URLs.')
+                        ->unique(table: 'stores', ignorable: fn($record) => $record),
+                ]),
 
             Select::make('type')
                 ->required()

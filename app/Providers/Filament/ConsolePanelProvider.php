@@ -64,6 +64,7 @@ class ConsolePanelProvider extends PanelProvider
             ->tenant(Store::class,  slugAttribute: 'slug')
             ->tenantProfile(EditStoreProfile::class)
             ->tenantRegistration(RegisterStore::class)
-            ->simplePageMaxContentWidth(MaxWidth::FourExtraLarge);
+            ->simplePageMaxContentWidth(MaxWidth::FourExtraLarge)
+            ->sidebarCollapsibleOnDesktop();
     }
 }
