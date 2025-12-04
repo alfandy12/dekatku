@@ -1,2 +1,10 @@
 *
 !.gitignore
+!store/
+
+# Daftar folder store yang ingin diizinkan
+!store/toko-elektronik-jakarta/
+!store/minimarket-sejahtera/
+!store/fashion-store-premium/
+!store/toko-buku-literasi/
+!store/warung-kopi-nusantara/

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Filament\Models\Contracts\HasName;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Store extends Model implements HasName
 {
@@ -30,6 +31,18 @@ class Store extends Model implements HasName
         // Pivot table store_user
         return $this->belongsToMany(User::class);
     }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Store memiliki banyak Role
+    public function roles(): HasMany
+    {
+        return $this->hasMany(Role::class);
+    }
+
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
