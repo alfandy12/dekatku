@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders\Data\Jasa;
+namespace Database\Seeders\data\jasa;
 
 class OtomotifJasa
 {

@@ -8,13 +8,14 @@ use App\Models\Category;
 use App\Models\Categories;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
-use Database\Seeders\Data\Jasa\KomputerJasa;
-use Database\Seeders\Data\Jasa\ElektronicJasa;
-use Database\Seeders\Data\Products\FashionProducts;
-use Database\Seeders\Data\Products\TanamanProducts;
-use Database\Seeders\Data\Products\SouvenirProducts;
-use Database\Seeders\Data\Products\AksesorisProducts;
-use Database\Seeders\Data\Products\MakananMinumanProducts;
+use Database\Seeders\data\jasa\KomputerJasa;
+use Database\Seeders\data\jasa\ElektronicJasa;
+use Database\Seeders\data\products\FashionProducts;
+use Database\Seeders\data\products\TanamanProducts;
+use Database\Seeders\data\products\SouvenirProducts;
+use Database\Seeders\data\products\AksesorisProducts;
+use Database\Seeders\data\products\MakananMinumanProducts;
+
 
 class ProductSeeder extends Seeder
 {

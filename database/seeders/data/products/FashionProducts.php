@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders\Data\Products;
+namespace Database\Seeders\data\products;
 
 class FashionProducts
 {
