@@ -121,9 +121,12 @@ class ProductResource extends Resource
                                 $title = $get('title') ?? 'default-logo';
 
                                 $slug = Str::slug($title);
+
+                                $store = Filament::getTenant()->title;
+
                                 $fileName = "{$slug}.jpg";
 
-                                $directory = "product/{$slug}";
+                                $directory = "store/{$store}/products/";
                                 $path = "{$directory}/{$fileName}";
 
                                 Storage::disk('public')->put($path, (string) $encoded, 'public');
