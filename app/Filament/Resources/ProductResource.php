@@ -153,7 +153,7 @@ class ProductResource extends Resource
                     ->label('Gambar')
                     ->circular()
                     ->size(40)
-                    ->url(fn($record) => $record->url_media ? asset('storage/' . $record->url_media) : asset('images/default.png')),
+                    ->url(fn($record) => '/storage/' . $record->url_media),
 
                 TextColumn::make('title')
                     ->label('Nama Produk')
