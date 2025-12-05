@@ -45,9 +45,9 @@ class UserStoreSeeder extends Seeder
 
         //get all users and attach stores
         $allUsers = User::all();
-        $allUsers[0]->stores()->attach([$allStores[0]->id, $allStores[1]->id]);
-        $allUsers[1]->stores()->attach([$allStores[1]->id, $allStores[2]->id, $allStores[3]->id]);
-        $allUsers[2]->stores()->attach([$allStores[3]->id, $allStores[4]->id]);
+        $allUsers[0]->stores()->attach([$allStores[0]->id => ['is_owner' => true], $allStores[1]->id => ['is_owner' => false]]);
+        $allUsers[1]->stores()->attach([$allStores[1]->id => ['is_owner' => true], $allStores[2]->id => ['is_owner' => false], $allStores[3]->id => ['is_owner' => false]]);
+        $allUsers[2]->stores()->attach([$allStores[3]->id => ['is_owner' => true], $allStores[4]->id => ['is_owner' => true]]);
 
         $allPermissions = Permission::pluck('id');
 

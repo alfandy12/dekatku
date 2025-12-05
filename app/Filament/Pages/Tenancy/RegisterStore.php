@@ -36,22 +36,16 @@ class RegisterStore extends RegisterTenant
 
     protected function handleRegistration(array $data): Store
     {
-        // Pastikan Role di-import: use Spatie\Permission\Models\Role;
-        // Pastikan Store di-import: use App\Models\Store;
 
         DB::beginTransaction();
 
         try {
             $store = Store::create($data);
 
-            /** @var \App\Models\User $user */
             $user = auth()->user();
 
-            // 1. Hubungkan User ke Store (Tenant)
-            $store->users()->attach($user);
+            $store->users()->attach($user, ['is_owner' => 1]);
 
-            // 2. Cari atau Buat Peran Super Admin yang Terikat pada Store BARU
-            // pastikan $newSuperAdminRole adalah instance Role yang valid
             $newSuperAdminRole = Role::firstOrCreate(
                 [
                     'name' => 'super_admin',
@@ -62,19 +56,16 @@ class RegisterStore extends RegisterTenant
 
             $allPermissions = Permission::all();
 
-            // Tetapkan semua izin yang ada ke peran Super Admin yang baru dibuat
             $newSuperAdminRole->givePermissionTo($allPermissions);
 
             $user->roles()->attach($newSuperAdminRole->id, [
                 'store_id' => $store->id,
-                'model_type' => get_class($user), // Tambahkan model_type untuk amannya
+                'model_type' => get_class($user),
             ]);
 
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            // Disarankan untuk menggunakan \Filament\Notifications\Notification jika ini
-            // adalah kode yang berjalan di frontend/Filament.
             throw $e;
         }
 

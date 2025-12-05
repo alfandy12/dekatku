@@ -61,7 +61,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
 
     public function stores(): BelongsToMany
     {
-        return $this->belongsToMany(Store::class);
+        return $this->belongsToMany(Store::class)->withPivot('is_owner');
     }
 
     public function getTenants(Panel $panel): Collection
