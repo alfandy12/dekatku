@@ -19,3 +19,14 @@ export interface Store {
 export interface NearbyStoresResponse {
     data: Store[];
 }
+
+export interface StorePaginateResponse {
+    data: Store[];
+    meta: {
+        current_page: number;
+        per_page: number;
+        total: number;
+        last_page: number;
+        has_more: boolean;
+    };
+}

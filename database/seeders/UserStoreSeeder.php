@@ -343,20 +343,28 @@ class UserStoreSeeder extends Seeder
         foreach ($allUsers as $user) {
             $store = $user->stores()->first();
 
-            $newRole = Role::create([
-                'name' => 'super_admin_store_' . $store->id,
-                'guard_name' => 'web',
-                'store_id' => $store->id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            $newRole = Role::firstOrCreate(
+                    [
+                        'name' => 'super_admin_store_' . $store->id,
+                        'guard_name' => 'web',
+                        'store_id' => $store->id
+                    ],
+                    [
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]
+            );
+
 
             $newRole->syncPermissions($allPermissions);
 
-            $user->roles()->attach($newRole->id, [
-                'store_id' => $store->id,
-                'model_type' => get_class($user),
+            $user->roles()->syncWithoutDetaching([
+                $newRole->id => [
+                    'store_id' => $store->id,
+                    'model_type' => get_class($user)
+                ]
             ]);
+
         }
     }
 }

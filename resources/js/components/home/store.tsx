@@ -8,7 +8,6 @@ const StoreCard = lazy(() => import('../ui/stores/store-card'));
 export default function Store() {
     const { data: stores, isLoading, isError, error } = useNearbyStores();
     const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-    console.log('data', stores);
 
     useEffect(() => {
         if (!stores) return;

@@ -23,7 +23,7 @@ class StoreController extends Controller
     }
 
     public function index(Request $request) {
-        $data = $this->getNearbyStores($request);
+        $data = $this->getNearbyStores($request, paginate: true);
         
         if($request->wantsJson()) {
             return response()->json($data);
@@ -32,7 +32,7 @@ class StoreController extends Controller
         return Inertia::render('stores/index');
     }
 
-     public function show(Request $request, string $slug)
+    public function show(Request $request, string $slug)
     {
         $data = $this->getStoreDetail($slug);
         
@@ -43,11 +43,21 @@ class StoreController extends Controller
         return Inertia::render('umkm/detail', ['slug' => $slug]);
     }
 
-    private function getNearbyStores(Request $request, ?int $limit = null) {
+    private function getNearbyStores(Request $request, ?int $limit = null, bool $paginate = false) {
         $sessionId = $request->session()->getId();
-        $cacheKey = "nearby_stores_{$sessionId}";
+        
+       
+        if ($paginate) {
+            $page = $request->input('page', 1);
+            $perPage = $request->input('per_page', 10);
+            $cacheKey = "nearby_stores_{$sessionId}_page_{$page}_per_{$perPage}";
+        } elseif ($limit) {
+            $cacheKey = "nearby_stores_{$sessionId}_limit_{$limit}";
+        } else {
+            $cacheKey = "nearby_stores_{$sessionId}_all";
+        }
 
-        return Cache::remember($cacheKey, 3600, function() use ($limit) {
+        return Cache::remember($cacheKey, 3600, function() use ($request, $limit, $paginate) {
             $stores = Store::with(['products' => function ($query) {
                 $query->select('id', 'store_id', 'title', 'url_media')->limit(3);
             }])
@@ -62,7 +72,7 @@ class StoreController extends Controller
                     'jarak' => $this->generateRandomDistance(),
                     'jarak_meter' => null,
                     'url_media' => $store->url_media,
-                    'products' =>  $store->products->map(function ($product) {
+                    'products' => $store->products->map(function ($product) {
                         return [
                             'id' => $product->id,
                             'title' => $product->title,
@@ -79,14 +89,41 @@ class StoreController extends Controller
                 $store['jarak_meter'] = $this->distanceToMeters($store['jarak']);
                 return $store;
             });
-            return $limit ? $stores->take($limit) : $stores;
+
+          
+            if ($paginate) {
+                $page = $request->input('page', 1);
+                $perPage = $request->input('per_page', 10);
+                $total = $stores->count();
+                $offset = ($page - 1) * $perPage;
+                $paginatedStores = $stores->slice($offset, $perPage)->values();
+                
+                return [
+                    'data' => $paginatedStores,
+                    'meta' => [
+                        'current_page' => $page,
+                        'per_page' => $perPage,
+                        'total' => $total,
+                        'last_page' => ceil($total / $perPage),
+                        'has_more' => $page < ceil($total / $perPage)
+                    ]
+                ];
+            }
+
+        
+            if ($limit) {
+                return $stores->slice(0, $limit)->values();
+            }
+
+    
+            return $stores;
         });
     }
 
     private function getStoreDetail(string $slug) {
         $store = Store::where('slug', $slug)
-        ->with(['products.categories', 'users'])
-        ->firstOrFail();
+            ->with(['products.categories', 'users'])
+            ->firstOrFail();
 
         return [
             'id' => $store->id,
@@ -107,7 +144,6 @@ class StoreController extends Controller
             })
         ];
     }
-
 
     private function generateRandomDistance(): string {
         $meters = rand(500, 5000);

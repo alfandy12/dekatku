@@ -5,7 +5,7 @@ import CallToAction from '@/components/home/call-to-action';
 import Footer from '@/components/home/footer';
 import Header from '@/components/home/header';
 import Store from '@/components/home/store';
-import { Head } from '@inertiajs/react';
+import HomeLayout from '@/layouts/app/home-layout';
 import { useEffect, useState } from 'react';
 
 export default function Welcome() {
@@ -31,19 +31,7 @@ export default function Welcome() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
     return (
-        <>
-            <Head title="Deketku">
-                <link rel="preconnect" href="https://fonts.googleapis.com" />
-                <link
-                    rel="preconnect"
-                    href="https://fonts.gstatic.com"
-                    crossOrigin="anonymous"
-                />
-                <link
-                    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-                    rel="stylesheet"
-                />
-            </Head>
+        <HomeLayout>
             <div className="relative w-full">
                 <div
                     className={`absolute top-0 h-screen w-full [mask-image:linear-gradient(to_bottom,#000000_0%,#000000_50%,rgba(0,0,0,0.5)_94%,transparent_100%)] transition-opacity duration-700 ease-in-out md:h-[110vh] ${
@@ -80,6 +68,6 @@ export default function Welcome() {
                 </div>
                 <Footer />
             </div>
-        </>
+        </HomeLayout>
     );
 }

@@ -1,4 +1,4 @@
-import { Store } from '@/types/store';
+import { Store, StorePaginateResponse } from '@/types/store';
 import axios from 'axios';
 
 const api = axios.create({
@@ -15,8 +15,13 @@ export const storesApi = {
         return response.data;
     },
 
-    getAllStore: async (): Promise<Store[]> => {
-        const response = await api.get<Store[]>('/umkm');
+    getAllStores: async (
+        page = 1,
+        perPage = 10,
+    ): Promise<StorePaginateResponse> => {
+        const response = await api.get<StorePaginateResponse>('/umkm', {
+            params: { page, per_page: perPage },
+        });
         return response.data;
     },
 
