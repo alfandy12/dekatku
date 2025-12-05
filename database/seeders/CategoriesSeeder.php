@@ -14,36 +14,34 @@ class CategoriesSeeder extends Seeder
     {
         $categories = [
             [
-                'name' => 'Makanan',
+                'name' => 'Makanan'
             ],
             [
-                'name' => 'Minuman',
+                'name' => 'Minuman'
             ],
             [
-                'name' => 'Fashion',
+                'name' => 'Aksesoris'
             ],
             [
-                'name' => 'Kerajinan Tangan',
+                'name' => 'Tanaman'
             ],
             [
-                'name' => 'Aksesoris',
+                'name' => 'Souvenir'
             ],
             [
-                'name' => 'Kecantikan',
+                'name' => 'Jasa Elektronik'
             ],
             [
-                'name' => 'Rumah Tangga',
+                'name' => 'Jasa Komputer'
             ],
             [
-                'name' => 'Tanaman',
+                'name' => 'Jasa Bangunan'
             ],
             [
-                'name' => 'Jasa',
-            ],
-            [
-                'name' => 'Oleh-oleh',
+                'name' => 'Jasa Otomotif'
             ],
         ];
+
 
         foreach ($categories as $category) {
             Categories::create($category);

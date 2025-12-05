@@ -1,6 +1,7 @@
 *
 !.gitignore
 !store/
+!product/
 
 # dummy store 
 !store/toko-elektronik-pramuka/
@@ -20,3 +21,18 @@
 
 !store/minimarket-sejahtera-matraman/
 !store/minimarket-sejahtera-matraman/**
+
+!product/aksesoris/
+!product/aksesoris/**
+
+!product/fashion/
+!product/fashion/**
+
+!product/makanan-minuman/
+!product/makanan-minuman/**
+
+!product/souvenir/
+!product/souvenir/**
+
+!product/tanaman/
+!product/tanaman/**
