@@ -7,6 +7,14 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Categories;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Collection;
+use Database\Seeders\Data\Jasa\KomputerJasa;
+use Database\Seeders\Data\Jasa\ElektronicJasa;
+use Database\Seeders\Data\Products\FashionProducts;
+use Database\Seeders\Data\Products\TanamanProducts;
+use Database\Seeders\Data\Products\SouvenirProducts;
+use Database\Seeders\Data\Products\AksesorisProducts;
+use Database\Seeders\Data\Products\MakananMinumanProducts;
 
 class ProductSeeder extends Seeder
 {
@@ -15,87 +23,102 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-        $products = [
-            [
-                'title' => 'Batik Wanita',
-                'price' => 120000,
-                'description' => '',
-                'url_media' => 'store/toko-elektronik-pramuka/products/batik-wanita.jpg',
-                'categories' => ['Fashion', 'Kecantikan']
-            ],
-            [
-                'title' => 'Batik',
-                'price' => 110000,
-                'description' => '',
-                'url_media' => 'hstore/toko-elektronik-pramuka/products/batik.jpg',
-                'categories' => ['Fashion']
-            ],
-            [
-                'title' => 'Celana Panjang',
-                'price' => 90000,
-                'description' => '',
-                'url_media' => 'hstore/toko-elektronik-pramuka/products/celana.jpg',
-                'categories' => ['Fashion']
-            ],
-            [
-                'title' => 'Jaket Universal',
-                'price' => 140000,
-                'description' => '',
-                'url_media' => 'hstore/toko-elektronik-pramuka/products/jaket.jpg',
-                'categories' => ['Fashion']
-            ],
-            [
-                'title' => 'Jaket Pria',
-                'price' => 110000,
-                'description' => '',
-                'url_media' => 'hstore/toko-elektronik-pramuka/products/jaket2.jpg',
-                'categories' => ['Fashion']
-            ],
-            [
-                'title' => 'Kemeja',
-                'price' => 110000,
-                'description' => '',
-                'url_media' => 'hstore/toko-elektronik-pramuka/products/kemeja.jpg',
-                'categories' => ['Fashion']
-            ],
-
-        ];
-
-        $stores = Store::all();
         $allCategories = Categories::all();
 
-        if ($stores->isEmpty()) {
-            $this->command->error('db store kosong!');
-            return;
-        }
-
         if ($allCategories->isEmpty()) {
-            $this->command->error('db kategoris kosong');
+            $this->command->error('Tabel categories kosong! Jalankan seeder kategori dulu.');
             return;
         }
 
-        foreach ($products as $productData) {
+        $this->insertProductsToSpecificStores(
+            productsData: MakananMinumanProducts::getAll(),
+            storeSlugs: [
+                'warung-rasa-nusantara',
+                'dapur-sehat-umkm',
+                'cita-rasa-lokal'
+            ],
+            allCategories: $allCategories
+        );
+
+        $fashionAksesoris = array_merge(AksesorisProducts::getAll(), FashionProducts::getAll());
+
+        $this->insertProductsToSpecificStores(
+            productsData: $fashionAksesoris,
+            storeSlugs: [
+                'glitz-glam-accessories',
+                'cantik-bersinar',
+                'fashionista-corner'
+            ],
+            allCategories: $allCategories
+        );
+
+        $this->insertProductsToSpecificStores(
+            productsData: TanamanProducts::getAll(),
+            storeSlugs: [
+                'hijau-asri',
+                'taman-kecilku',
+                'bonsai-dan-hias'
+            ],
+            allCategories: $allCategories
+        );
+
+        $this->insertProductsToSpecificStores(
+            productsData: SouvenirProducts::getAll(),
+            storeSlugs: [
+                'kenangan-unik',
+                'oleh-oleh-istimewa',
+                'charmy-souvenir'
+            ],
+            allCategories: $allCategories
+        );
+
+        $jasaTeknologi = array_merge(ElektronicJasa::getAll(), KomputerJasa::getAll());
+
+        $this->insertProductsToSpecificStores(
+            productsData: $jasaTeknologi,
+            storeSlugs: [
+                'service-elektronik-pramuka',
+                'reparasi-gadget-center',
+                'teknofix'
+            ],
+            allCategories: $allCategories
+        );
+
+
+        $this->command->info('Product seeder berhasil! Produk sudah masuk ke toko yang sesuai spesifikasinya.');
+    }
+
+    private function insertProductsToSpecificStores(array $productsData, array $storeSlugs, Collection $allCategories)
+    {
+        $targetStores = Store::whereIn('slug', $storeSlugs)->get();
+
+        if ($targetStores->isEmpty()) {
+            $this->command->warn("Tidak ada toko ditemukan untuk slugs: " . implode(', ', $storeSlugs));
+            return;
+        }
+
+        foreach ($productsData as $data) {
+            $randomStore = $targetStores->random();
+
             $product = Product::create([
-                'store_id' => $stores->random()->id,
-                'title' => $productData['title'],
-                'price' => $productData['price'],
-                'description' => $productData['description'],
-                'url_media' => $productData['url_media'],
+                'store_id'    => $randomStore->id,
+                'title'       => $data['title'],
+                'price'       => $data['price'],
+                'description' => $data['description'],
+                'url_media'   => $data['url_media'] ?? null,
             ]);
 
-            $kolomKategories = [];
-            foreach ($productData['categories'] as $categoryName) {
-                $category = $allCategories->firstWhere('name', $categoryName);
-                if ($category) {
-                    $kolomKategories[] = $category->id;
+            $categoryIds = [];
+            foreach ($data['categories'] as $categoryName) {
+                $cat = $allCategories->firstWhere('name', $categoryName);
+                if ($cat) {
+                    $categoryIds[] = $cat->id;
                 }
             }
 
-            if (!empty($kolomKategories)) {
-                $product->categories()->attach($kolomKategories);
+            if (!empty($categoryIds)) {
+                $product->categories()->attach($categoryIds);
             }
         }
-
-        $this->command->info('Product seeder berhasil dibuat!');
     }
 }

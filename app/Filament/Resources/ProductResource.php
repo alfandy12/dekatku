@@ -5,20 +5,21 @@ namespace App\Filament\Resources;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Product;
+use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
-use Illuminate\Support\Collection;
 use Filament\Tables\Filters\Filter;
-use Illuminate\Support\Facades\Auth;
+use Intervention\Image\ImageManager;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\ImageColumn;
@@ -27,14 +28,13 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Intervention\Image\Drivers\Gd\Driver;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use App\Filament\Resources\ProductResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Filament\Resources\ProductResource\Pages\EditProduct;
 use App\Filament\Resources\ProductResource\Pages\ListProducts;
 use App\Filament\Resources\ProductResource\Pages\CreateProduct;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ProductResource extends Resource
 {
@@ -87,14 +87,49 @@ class ProductResource extends Resource
                     ->description('Upload gambar dan tulis deskripsi produk')
                     ->schema([
                         FileUpload::make('url_media')
-                            ->label('Gambar Produk')
+                            ->label('Logo Media')
+                            ->directory(function (callable $get) {
+                                $title = $get('title');
+                                if (empty($title)) {
+                                    return 'store/default-slug';
+                                }
+                                $slug = Str::slug($title);
+                                return "product/{$slug}";
+                            })
+                            ->visibility('public')
                             ->image()
-                            ->directory('products')
                             ->imageEditor()
-                            ->maxSize(2048)
-                            ->helperText('Format: JPG, PNG. Maksimal 2MB')
-                            ->columnSpanFull(),
+                            ->minSize(128)
+                            ->maxSize(4096)
+                            ->downloadable()
+                            ->saveUploadedFileUsing(function (TemporaryUploadedFile $file, Get $get) {
+                                $manager = new ImageManager(new Driver());
 
+                                $filePath = $file->getRealPath();
+                                $image = $manager->read($filePath);
+
+                                $targetSize = 500;
+
+                                if ($image->width() > $targetSize || $image->height() > $targetSize) {
+                                    $image->scaleDown($targetSize);
+                                }
+
+                                $image->sharpen(8);
+
+                                $encoded = $image->encodeByExtension('jpg');
+
+                                $title = $get('title') ?? 'default-logo';
+
+                                $slug = Str::slug($title);
+                                $fileName = "{$slug}.jpg";
+
+                                $directory = "product/{$slug}";
+                                $path = "{$directory}/{$fileName}";
+
+                                Storage::disk('public')->put($path, (string) $encoded, 'public');
+
+                                return $path;
+                            }),
                         RichEditor::make('description')
                             ->label('Deskripsi Produk')
                             ->maxLength(1000)
@@ -111,13 +146,14 @@ class ProductResource extends Resource
 
     public static function table(Table $table): Table
     {
+
         return $table
             ->columns([
                 ImageColumn::make('url_media')
                     ->label('Gambar')
                     ->circular()
                     ->size(40)
-                    ->defaultImageUrl(url('/images/placeholder-product.png')),
+                    ->url(fn($record) => '/storage/' . $record->url_media),
 
                 TextColumn::make('title')
                     ->label('Nama Produk')
