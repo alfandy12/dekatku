@@ -7,23 +7,29 @@ use Filament\Panel;
 use App\Models\Store;
 use Filament\Widgets;
 use Filament\PanelProvider;
+use Filament\Facades\Filament;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Facades\Auth;
 use Filament\Http\Middleware\Authenticate;
 use App\Filament\Pages\Tenancy\RegisterStore;
 use Illuminate\Session\Middleware\StartSession;
 use App\Filament\Pages\Tenancy\EditStoreProfile;
+use App\Filament\Pages\Tenancy\Member;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use BezhanSalleh\FilamentShield\Middleware\SyncShieldTenant;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
 use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class ConsolePanelProvider extends PanelProvider
 {
@@ -33,8 +39,9 @@ class ConsolePanelProvider extends PanelProvider
             ->default()
             ->id('console')
             ->path('console')
+            ->emailVerification()
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => Color::Purple,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -70,6 +77,22 @@ class ConsolePanelProvider extends PanelProvider
             ->simplePageMaxContentWidth(MaxWidth::FourExtraLarge)
             ->sidebarCollapsibleOnDesktop()
             ->plugins([
+                FilamentShieldPlugin::make()
+                    ->gridColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'lg' => 3
+                    ])
+                    ->sectionColumnSpan(1)
+                    ->checkboxListColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'lg' => 4,
+                    ])
+                    ->resourceCheckboxListColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                    ]),
                 FilamentEditProfilePlugin::make()
                     ->slug('my-profile')
                     ->setTitle('My Profile')
@@ -83,14 +106,30 @@ class ConsolePanelProvider extends PanelProvider
                     ->shouldShowSanctumTokens()
                     ->shouldShowBrowserSessionsForm()
             ])
+            ->tenantMiddleware([
+                SyncShieldTenant::class,
+            ], isPersistent: true)
             ->userMenuItems([
                 'profile' => MenuItem::make()
-                    ->label(fn() => auth()->user()->name)
+                    ->label(fn() => Auth::user()->name)
                     ->url(fn(): string => EditProfilePage::getUrl())
                     ->icon('heroicon-m-user-circle')
                     ->visible(function (): bool {
-                        return auth()->user()->stores()->exists();
+                        return Filament::getTenant() !== null;
                     }),
+            ])
+            ->tenantMenuItems([
+                'profile' => MenuItem::make()
+                    // ->visible(false)
+                    ->label('Store Profile'),
+                'member' => MenuItem::make()
+                    ->label('Member')
+                    ->url(fn(): string => Member::getUrl())
+                    ->icon('heroicon-m-user-group')
+                    ->visible(function (): bool {
+                        return Filament::getTenant() !== null;
+                    }),
+                // ...
             ]);
     }
 }

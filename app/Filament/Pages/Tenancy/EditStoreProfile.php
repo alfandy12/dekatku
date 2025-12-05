@@ -21,4 +21,5 @@ class EditStoreProfile extends EditTenantProfile
                 FieldRegistration::formFields()
             );
     }
+
 }

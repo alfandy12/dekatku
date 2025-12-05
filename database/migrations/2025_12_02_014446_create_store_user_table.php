@@ -18,6 +18,9 @@ return new class extends Migration
             // Foreign Key ke tabel 'users'
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
 
+            //check owner
+            $table->tinyInteger('is_owner')->default(0);
+
             // Kombinasi ini harus unik (satu user hanya bisa terhubung sekali ke satu store)
             $table->primary(['store_id', 'user_id']);
         });
