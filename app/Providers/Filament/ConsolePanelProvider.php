@@ -16,6 +16,7 @@ use Filament\Http\Middleware\Authenticate;
 use App\Filament\Pages\Tenancy\RegisterStore;
 use Illuminate\Session\Middleware\StartSession;
 use App\Filament\Pages\Tenancy\EditStoreProfile;
+use App\Filament\Resources\MemberResource;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
@@ -116,6 +117,19 @@ class ConsolePanelProvider extends PanelProvider
                     ->visible(function (): bool {
                         return Filament::getTenant() !== null;
                     }),
+            ])
+            ->tenantMenuItems([
+                'profile' => MenuItem::make()
+                    // ->visible(false)
+                    ->label('Store Profile'),
+                'member' => MenuItem::make()
+                    ->label('Members')
+                    ->url(fn(): string => MemberResource::getUrl())
+                    ->icon('heroicon-m-user-group')
+                    ->visible(function (): bool {
+                        return Filament::getTenant() !== null;
+                    }),
+                // ...
             ]);
     }
 }
