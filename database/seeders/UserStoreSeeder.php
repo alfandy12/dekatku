@@ -14,6 +14,8 @@ class UserStoreSeeder extends Seeder
 {
     public function run(): void
     {
+        // ... (Bagian data user dan store Anda di atas tetap sama)
+
         //data user
         $users = [
             ['name' => 'Ucup Saepudin', 'email' => 'test1@example.com', 'password' => Hash::make('password'), 'email_verified_at' => now(), 'created_at' => now(), 'updated_at' => now()],
@@ -25,6 +27,7 @@ class UserStoreSeeder extends Seeder
         User::insert($users);
 
         //data store
+        // ... (data $stores dan Store::create() tetap sama)
         $stores = [
             ['title' => 'Toko Elektronik Pramuka',      'type' => 'product', 'slug' => 'toko-elektronik-pramuka',      'url_media' => 'store/toko-elektronik-pramuka/logo.png',      'location' => json_encode(['lat' => -6.207114, 'lng' => 106.875379]), 'description' => 'Toko elektronik lengkap dekat daerah Pramuka.',      'created_at' => now(), 'updated_at' => now(),],
             ['title' => 'Minimarket Sejahtera Matraman', 'type' => 'product', 'slug' => 'minimarket-sejahtera-matraman', 'url_media' => 'store/minimarket-sejahtera-matraman/logo.png', 'location' => json_encode(['lat' => -6.206800, 'lng' => 106.874900]), 'description' => 'Minimarket murah dan lengkap di Matraman.',      'created_at' => now(), 'updated_at' => now(),],
@@ -46,28 +49,26 @@ class UserStoreSeeder extends Seeder
         $allUsers[1]->stores()->attach([$allStores[1]->id, $allStores[2]->id, $allStores[3]->id]);
         $allUsers[2]->stores()->attach([$allStores[3]->id, $allStores[4]->id]);
 
-        $allPermissions = Permission::all();
+        $allPermissions = Permission::pluck('id');
 
-        //assign roles
-        foreach ($createdStores as $store) {
-            $user = $store->users()->first();
-            $newSuperAdminRole = Role::firstOrCreate(
-                [
-                    'name' => 'super_admin',
-                    'guard_name' => 'web',
-                    'store_id' => $store->id,
-                ]
-            );
+        foreach ($allUsers as $user) {
+            $store = $user->stores()->first();
 
-            $allPermissions = Permission::all();
+            $newRole = Role::create([
+                'name' => 'super_admin_store_' . $store->id,
+                'guard_name' => 'web',
+                'store_id' => $store->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
-            // Tetapkan semua izin yang ada ke peran Super Admin yang baru dibuat
-            $newSuperAdminRole->givePermissionTo($allPermissions);
+            $newRole->syncPermissions($allPermissions);
 
-            $user->roles()->attach($newSuperAdminRole->id, [
+            $user->roles()->attach($newRole->id, [
                 'store_id' => $store->id,
                 'model_type' => get_class($user),
             ]);
         }
+
     }
 }

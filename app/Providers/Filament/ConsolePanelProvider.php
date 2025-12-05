@@ -40,7 +40,7 @@ class ConsolePanelProvider extends PanelProvider
             ->path('console')
             ->emailVerification()
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => Color::Purple,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -93,7 +93,6 @@ class ConsolePanelProvider extends PanelProvider
                         'sm' => 2,
                     ]),
                 FilamentEditProfilePlugin::make()
-                    ->shouldShowTwoFactorAuthenticationForm()
                     ->slug('my-profile')
                     ->setTitle('My Profile')
                     ->setNavigationLabel('My Profile')

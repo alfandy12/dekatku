@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Filament\Models\Contracts\HasName;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Models\Contracts\HasAvatar;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Storage;
 
-class Store extends Model implements HasName
+class Store extends Model implements HasName, HasAvatar
 {
     use HasFactory;
 
@@ -52,8 +54,22 @@ class Store extends Model implements HasName
     {
         return $user->stores->all();
     }
+
     public function getFilamentName(): string
     {
         return "{$this->title}";
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        if (!$this->url_media) {
+            return null;
+        }
+
+        $disk = Storage::disk('public');
+
+        return $disk->exists($this->url_media)
+            ? $disk->url($this->url_media)
+            : null;
     }
 }

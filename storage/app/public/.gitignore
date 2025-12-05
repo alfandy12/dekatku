@@ -2,9 +2,21 @@
 !.gitignore
 !store/
 
-# Daftar folder store yang ingin diizinkan
-!store/toko-elektronik-jakarta/
-!store/minimarket-sejahtera/
-!store/fashion-store-premium/
-!store/toko-buku-literasi/
-!store/warung-kopi-nusantara/
+# dummy store 
+!store/toko-elektronik-pramuka/
+!store/toko-elektronik-pramuka/**
+
+!store/supermarket-utama/
+!store/supermarket-utama/**
+
+!store/warung-kopi-matraman/
+!store/warung-kopi-matraman/**
+
+!store/fashion-store-rawamangun/
+!store/fashion-store-rawamangun/**
+
+!store/toko-buku-salemba/
+!store/toko-buku-salemba/**
+
+!store/minimarket-sejahtera-matraman/
+!store/minimarket-sejahtera-matraman/**
