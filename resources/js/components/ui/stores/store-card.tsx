@@ -33,7 +33,7 @@ const StoreCard = memo(({ store, index }: StoreCardProps) => {
     
                 <div className="mb-4 flex items-start gap-4">
                     <img
-                        src={store.url_media || '/placeholder-store.jpg'}
+                        src={`/storage/${store.url_media}` }
                         alt={store.nama_toko}
                         className="h-16 w-16 flex-shrink-0 rounded-full border-2 border-white/20 object-cover"
                         loading="lazy"
@@ -73,7 +73,7 @@ const StoreCard = memo(({ store, index }: StoreCardProps) => {
                                 }`}
                             >
                                 <img
-                                    src={product.image}
+                                    src={`/storage/${product.image}`}
                                     alt={product.title || `Product ${idx + 1}`}
                                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                                     loading="lazy"

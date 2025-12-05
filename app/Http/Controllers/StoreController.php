@@ -2,164 +2,128 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Store;
+use App\Http\Requests\ChatRequest;
+use App\Services\ChatService;
+use App\Services\StoreService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
+use Inertia\Response;
 use Laravel\Fortify\Features;
 
 class StoreController extends Controller
 {
-    public function home(Request $request) {
-        $data = $this->getNearbyStores($request, 5);
+    public function __construct(
+        private ChatService $chatService,
+        private StoreService $storeService
+    ) {
+        Log::info('StoreController: Services injected successfully');
+    }
 
-        if ($request->wantsJson()){
+    /**
+     * Handle chat requests
+     */
+    public function chat(ChatRequest $request): JsonResponse
+    {
+        Log::info('=== CHAT REQUEST START ===');
+
+        try {
+            $validated = $request->validated();
+            $sessionId = $request->session()->getId();
+            
+        
+            $nearbyStores = $this->storeService->getStoresForChat($sessionId);
+            
+            Log::info('Stores loaded:', ['count' => count($nearbyStores)]);
+
+            $context = [
+                'nearby_stores' => $nearbyStores,
+                'user_location' => $request->session()->get('user_location'),
+            ];
+
+
+            if (isset($validated['history']) && count($validated['history']) > 0) {
+                $messages = $validated['history'];
+                $messages[] = [
+                    'role' => 'user',
+                    'content' => $validated['message'],
+                ];
+                
+                $result = $this->chatService->chatWithHistory($messages, $context);
+            } else {
+                $result = $this->chatService->chat($validated['message'], $context);
+            }
+
+            Log::info('Chat result:', $result);
+
+            return response()->json([
+                'success' => $result['success'],
+                'response' => $result['message'],
+                'context' => [
+                    'stores_count' => count($nearbyStores),
+                    'has_location' => $request->session()->has('user_location'),
+                ],
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('=== CHAT ERROR ===', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'response' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function home(Request $request): JsonResponse|Response
+    {
+        $sessionId = $request->session()->getId();
+        $data = $this->storeService->getNearbyStores($sessionId, limit: 5);
+
+        if ($request->wantsJson()) {
             return response()->json($data);
         }
 
         return Inertia::render('welcome', [
             'canRegister' => Features::enabled(Features::registration()),
-         ]);
+        ]);
     }
 
-    public function index(Request $request) {
-        $data = $this->getNearbyStores($request, paginate: true);
+    /**
+     * Show stores index page
+     */
+    public function index(Request $request): JsonResponse|Response
+    {
+        $sessionId = $request->session()->getId();
+        $page = $request->input('page', 1);
+        $perPage = $request->input('per_page', 10);
         
-        if($request->wantsJson()) {
+        $data = $this->storeService->getPaginatedNearbyStores(
+            $sessionId, 
+            $page, 
+            $perPage
+        );
+        
+        if ($request->wantsJson()) {
             return response()->json($data);
         }
 
         return Inertia::render('stores/index');
     }
 
-    public function show(Request $request, string $slug)
+    public function show(Request $request, string $slug): JsonResponse|Response
     {
-        $data = $this->getStoreDetail($slug);
+        $data = $this->storeService->getStoreDetail($slug);
         
         if ($request->wantsJson()) {
             return response()->json($data);
         }
         
         return Inertia::render('umkm/detail', ['slug' => $slug]);
-    }
-
-    private function getNearbyStores(Request $request, ?int $limit = null, bool $paginate = false) {
-        $sessionId = $request->session()->getId();
-        
-       
-        if ($paginate) {
-            $page = $request->input('page', 1);
-            $perPage = $request->input('per_page', 10);
-            $cacheKey = "nearby_stores_{$sessionId}_page_{$page}_per_{$perPage}";
-        } elseif ($limit) {
-            $cacheKey = "nearby_stores_{$sessionId}_limit_{$limit}";
-        } else {
-            $cacheKey = "nearby_stores_{$sessionId}_all";
-        }
-
-        return Cache::remember($cacheKey, 3600, function() use ($request, $limit, $paginate) {
-            $stores = Store::with(['products' => function ($query) {
-                $query->select('id', 'store_id', 'title', 'url_media')->limit(3);
-            }])
-            ->get()
-            ->map(function ($store) {
-                return [
-                    'id' => $store->id,
-                    'nama_toko' => $store->title,
-                    'slug' => $store->slug,
-                    'description' => $store->description,
-                    'type' => $store->type,
-                    'jarak' => $this->generateRandomDistance(),
-                    'jarak_meter' => null,
-                    'url_media' => $store->url_media,
-                    'products' => $store->products->map(function ($product) {
-                        return [
-                            'id' => $product->id,
-                            'title' => $product->title,
-                            'image' => $product->url_media,
-                        ];
-                    })
-                ];
-            })
-            ->sortBy(function ($store) {
-                return $this->distanceToMeters($store['jarak']);
-            })
-            ->values()
-            ->map(function ($store) {
-                $store['jarak_meter'] = $this->distanceToMeters($store['jarak']);
-                return $store;
-            });
-
-          
-            if ($paginate) {
-                $page = $request->input('page', 1);
-                $perPage = $request->input('per_page', 10);
-                $total = $stores->count();
-                $offset = ($page - 1) * $perPage;
-                $paginatedStores = $stores->slice($offset, $perPage)->values();
-                
-                return [
-                    'data' => $paginatedStores,
-                    'meta' => [
-                        'current_page' => $page,
-                        'per_page' => $perPage,
-                        'total' => $total,
-                        'last_page' => ceil($total / $perPage),
-                        'has_more' => $page < ceil($total / $perPage)
-                    ]
-                ];
-            }
-
-        
-            if ($limit) {
-                return $stores->slice(0, $limit)->values();
-            }
-
-    
-            return $stores;
-        });
-    }
-
-    private function getStoreDetail(string $slug) {
-        $store = Store::where('slug', $slug)
-            ->with(['products.categories', 'users'])
-            ->firstOrFail();
-
-        return [
-            'id' => $store->id,
-            'nama_toko' => $store->title,
-            'description' => $store->description,
-            'type' => $store->type,
-            'url_media' => $store->url_media,
-            'location' => $store->location,
-            'products' => $store->products->map(function ($product) {
-                return [
-                    'id' => $product->id,
-                    'title' => $product->title,
-                    'image' => $product->url_media,
-                    'price' => $product->price,
-                    'description' => $product->description,
-                    'categories' => $product->categories->pluck('name'),
-                ];
-            })
-        ];
-    }
-
-    private function generateRandomDistance(): string {
-        $meters = rand(500, 5000);
-
-        if ($meters < 1000) {
-            return $meters . 'm';
-        }
-
-        return round($meters / 1000, 1) . 'km';
-    }
-
-    private function distanceToMeters(string $distance): int {
-        if (str_contains($distance, 'km')) {
-            return (int) (floatval($distance) * 1000); 
-        }
-
-        return (int) floatval($distance);
     }
 }
