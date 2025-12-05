@@ -22,9 +22,11 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Actions\Action as ActionTable;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class Member extends Page implements HasForms, HasTable
 {
+    use HasPageShield;
     use InteractsWithTable;
     use InteractsWithForms;
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
