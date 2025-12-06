@@ -5,20 +5,22 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Panel;
 use Illuminate\Support\Collection;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Filament\Models\Contracts\HasTenants;
+use Filament\Models\Contracts\FilamentUser;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasTenants;
 
-class User extends Authenticatable implements FilamentUser, HasTenants
+class User extends Authenticatable implements FilamentUser, HasTenants, MustVerifyEmail
 
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -59,7 +61,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
     public function stores(): BelongsToMany
     {
-        return $this->belongsToMany(Store::class);
+        return $this->belongsToMany(Store::class)->withPivot('is_owner');
     }
 
     public function getTenants(Panel $panel): Collection
@@ -83,4 +85,5 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     {
         return $tenant->title;
     }
+
 }

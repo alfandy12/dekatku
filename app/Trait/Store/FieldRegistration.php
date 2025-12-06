@@ -98,6 +98,7 @@ trait FieldRegistration
                 ->disableToolbarButtons([
                     'attachFiles',
                 ])
+                ->required()
                 ->nullable(),
         ];
     }
