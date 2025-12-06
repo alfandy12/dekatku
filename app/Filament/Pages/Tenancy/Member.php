@@ -7,6 +7,8 @@ use Filament\Pages\Page;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Actions\EditAction;
@@ -14,6 +16,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -82,7 +85,7 @@ class Member extends Page implements HasForms, HasTable
                         })
                         ->hidden(function (User $record) {
                             $tenantId = Filament::getTenant()->id;
-                            $currentUser = auth()->user();
+                            $currentUser = Auth::user();
 
                             // Cek apakah current user adalah owner
                             $currentUserIsOwner = $currentUser
@@ -129,20 +132,55 @@ class Member extends Page implements HasForms, HasTable
                         ->getOptionLabelUsing(fn($value): ?string => User::find($value)?->email)
                         ->searchable()
                         ->required()
-                        ->multiple()
                         ->createOptionForm([
-
+                            TextInput::make('name')
+                                ->label('Nama Lengkap')
+                                ->required(),
                             TextInput::make('email')
                                 ->label('Email')
-                                ->required()
                                 ->email()
+                                ->required()
+                                ->unique(table: 'users', column: 'email'),
+                            TextInput::make('password')
+                                ->label('Password')
+                                ->password()
+                                ->required()
+                                ->minLength(8),
                         ])
-                        ->required(),
+                        ->createOptionUsing(function (array $data) {
+                            return User::create([
+                                'name' => $data['name'],
+                                'email' => $data['email'],
+                                'password' => Hash::make($data['password']),
+                            ])->id;
+                        })
+                        ->required()
+                        ->helperText('Cari email user yang sudah terdaftar, atau klik tombol plus (+) untuk mendaftarkan user baru.'),
                 ])
                 ->action(function (array $data): void {
-                    User::whereIn('id', $data['userId'])->each(function (User $user) {
-                        $user->stores()->attach(Filament::getTenant()->id, ['is_owner' => 0]);
-                    });
+                    $tenantId = Filament::getTenant()->id;
+                    $userId = $data['userId'];
+
+                    $user = User::find($userId);
+
+                    $exists = $user->stores()->where('stores.id', $tenantId)->exists();
+
+                    if ($exists) {
+                        Notification::make()
+                            ->title('Gagal')
+                            ->body('User ini sudah menjadi member di toko Anda.')
+                            ->danger()
+                            ->send();
+                        return;
+                    }
+
+                    $user->stores()->attach($tenantId, ['is_owner' => false]);
+
+                    Notification::make()
+                        ->title('Sukses')
+                        ->body('Member berhasil ditambahkan!')
+                        ->success()
+                        ->send();
                 }),
         ];
     }
