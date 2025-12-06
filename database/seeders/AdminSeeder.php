@@ -15,16 +15,11 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        // --- 1. Buat atau Dapatkan Role 'super_admin' (GUARD: admin, TEAM_ID: NULL/GLOBAL) ---
-
-        // Pastikan peran 'super_admin' dibuat dengan guard 'admin'
-        // dan team_id (store_id) diset NULL, menjadikannya peran GLOBAL/Non-Tenant.
+        
         $superAdminRole = Role::firstOrCreate(
             ['name' => 'super_admin', 'guard_name' => 'admin'],
-            ['store_id' => null] // Explicitly set team_id to NULL
+            ['store_id' => null]
         );
-
-        // --- 2. Buat atau Dapatkan Admin ---
 
         $admin1 = Admin::firstOrCreate(
             ['email' => 'admin@dekatku.id'],
@@ -34,7 +29,6 @@ class AdminSeeder extends Seeder
             ]
         );
 
-        // Admin Second
         $admin2 = Admin::firstOrCreate(
             ['email' => 'admin2@dekatku.id'],
             [
@@ -43,16 +37,9 @@ class AdminSeeder extends Seeder
             ]
         );
 
-        // --- 3. Tugaskan Role ke Admin Pertama ---
-
-        // Tugaskan Role 'super_admin' kepada Admin Pertama
         $admin1->assignRole($superAdminRole);
 
-        echo "Role 'super_admin' global berhasil ditugaskan kepada Admin First.\n";
-
-        // --- 4. Buat Izin dan Tugaskan ke Role (Opsional, untuk kelengkapan) ---
-
-        $permissionsJson = '["view_product","view_any_product","create_product","update_product","restore_product","restore_any_product","replicate_product","reorder_product","delete_product","delete_any_product","force_delete_product","force_delete_any_product","view_role","view_any_role","create_role","update_role","delete_role","delete_any_role"]';
+        $permissionsJson = '["view_product","view_any_product","create_product","update_product","restore_product","restore_any_product","replicate_product","reorder_product","delete_product","delete_any_product","force_delete_product","force_delete_any_product","view_role","view_any_role","create_role","update_role","delete_role","delete_any_role","view_store","view_any_store","create_store","update_store","restore_store","restore_any_store","replicate_store","reorder_store","delete_store","delete_any_store","force_delete_store","force_delete_any_store"]';
 
         $permissions = json_decode($permissionsJson, true);
 
