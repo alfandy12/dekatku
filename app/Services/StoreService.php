@@ -76,10 +76,22 @@ class StoreService
     }
 
 
-    public function getStoreDetail(string $slug): array
+    public function getStoreDetail(string $slug, string $sessionId): array
     {
-        $store = $this->repository->findBySlugWithRelations($slug);
-        return $this->transformer->transformForDetail($store);
+        $cacheKey = "store_detail_{$slug}_{$sessionId}";
+        
+        return Cache::remember($cacheKey, 3600, function() use ($slug, $sessionId) {
+            $store = $this->repository->findBySlugWithRelations($slug);
+            
+            $distance = $this->distanceService->generateRandomDistance(
+                $store->id, 
+                $sessionId
+            );
+            
+            $distanceInMeters = $this->distanceService->distanceToMeters($distance);
+            
+            return $this->transformer->transformForDetail($store, $distance, $distanceInMeters);
+        });
     }
 
     public function getStoresForChat(string $sessionId, int $limit = 15): array

@@ -2,6 +2,7 @@ import { MapPin } from 'lucide-react';
 import { Store } from '@/types/store';
 import { memo } from 'react';
 import { MagicCard } from '../magic-card';
+import { router } from '@inertiajs/react';
 
 interface StoreCardProps {
     store: Store;
@@ -14,7 +15,9 @@ const StoreCard = memo(({ store, index }: StoreCardProps) => {
         return text.slice(0, maxLength) + '...';
     };
 
-    
+    const handleShowDetail =  (slug: string) => {
+        return router.get(`/umkm/${slug}`)
+    }
 
     const getProductGrid = (productCount: number) => {
         if (productCount === 2) return 'grid-cols-2';
@@ -29,6 +32,7 @@ const StoreCard = memo(({ store, index }: StoreCardProps) => {
             className="p-0.5 rounded-2xl"
         >
         <div
+            onClick={() => handleShowDetail(store.slug)}
             className="group relative cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/0 p-6 backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:bg-white/10"
             style={{ animationDelay: `${index * 0.1}s` }}
         >

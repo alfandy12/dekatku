@@ -22,13 +22,16 @@ class StoreTransformer
         ];
     }
 
-    public function transformForDetail(Store $store): array
+    public function transformForDetail(Store $store, string $distance, ?int $distanceInMeters = null): array
     {
         return [
             'id' => $store->id,
             'nama_toko' => $store->title,
+            'slug' => $store->slug,
             'description' => $store->description,
             'type' => $store->type,
+            'jarak' => $distance,
+            'jarak_meter' => $distanceInMeters,
             'url_media' => $store->url_media,
             'location' => $store->location,
             'products' => $this->transformDetailProducts($store->products),

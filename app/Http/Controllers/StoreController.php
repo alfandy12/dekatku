@@ -26,7 +26,7 @@ class StoreController extends Controller
      */
     public function chat(ChatRequest $request): JsonResponse
     {
-        Log::info('=== CHAT REQUEST START ===');
+      
 
         try {
             $validated = $request->validated();
@@ -94,9 +94,6 @@ class StoreController extends Controller
         ]);
     }
 
-    /**
-     * Show stores index page
-     */
     public function index(Request $request): JsonResponse|Response
     {
         $sessionId = $request->session()->getId();
@@ -118,12 +115,13 @@ class StoreController extends Controller
 
     public function show(Request $request, string $slug): JsonResponse|Response
     {
-        $data = $this->storeService->getStoreDetail($slug);
+        $sessionId = $request->session()->getId();
+        $data = $this->storeService->getStoreDetail($slug, $sessionId);
         
         if ($request->wantsJson()) {
             return response()->json($data);
         }
         
-        return Inertia::render('umkm/detail', ['slug' => $slug]);
+        return Inertia::render('stores/detail', ['slug' => $slug]);
     }
 }
