@@ -43,27 +43,27 @@ class AdminSeeder extends Seeder
             ]
         );
 
-        // // --- 3. Tugaskan Role ke Admin Pertama ---
+        // --- 3. Tugaskan Role ke Admin Pertama ---
 
-        // // Tugaskan Role 'super_admin' kepada Admin Pertama
-        // $admin1->assignRole($superAdminRole);
+        // Tugaskan Role 'super_admin' kepada Admin Pertama
+        $admin1->assignRole($superAdminRole);
 
-        // echo "Role 'super_admin' global berhasil ditugaskan kepada Admin First.\n";
+        echo "Role 'super_admin' global berhasil ditugaskan kepada Admin First.\n";
 
-        // // --- 4. Buat Izin dan Tugaskan ke Role (Opsional, untuk kelengkapan) ---
+        // --- 4. Buat Izin dan Tugaskan ke Role (Opsional, untuk kelengkapan) ---
 
-        // $permissionsJson = '["view_product","view_any_product","create_product","update_product","restore_product","restore_any_product","replicate_product","reorder_product","delete_product","delete_any_product","force_delete_product","force_delete_any_product","view_role","view_any_role","create_role","update_role","delete_role","delete_any_role"]';
+        $permissionsJson = '["view_product","view_any_product","create_product","update_product","restore_product","restore_any_product","replicate_product","reorder_product","delete_product","delete_any_product","force_delete_product","force_delete_any_product","view_role","view_any_role","create_role","update_role","delete_role","delete_any_role"]';
 
-        // $permissions = json_decode($permissionsJson, true);
+        $permissions = json_decode($permissionsJson, true);
 
-        // foreach ($permissions as $permissionName) {
-        //     Permission::firstOrCreate(
-        //         ['name' => $permissionName, 'guard_name' => 'admin']
-        //     );
-        // }
+        foreach ($permissions as $permissionName) {
+            Permission::firstOrCreate(
+                ['name' => $permissionName, 'guard_name' => 'admin']
+            );
+        }
 
-        // $superAdminRole->givePermissionTo(
-        //     Permission::where('guard_name', 'admin')->get()
-        // );
+        $superAdminRole->givePermissionTo(
+            Permission::where('guard_name', 'admin')->get()
+        );
     }
 }

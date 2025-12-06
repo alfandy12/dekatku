@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Admin extends Authenticatable implements FilamentUser
 
 {
-    use HasFactory, Notifiable,  HasRoles, HasPanelShield;
+    use HasFactory, Notifiable,  HasRoles;
 
     protected $guard_name = 'admin'; // Guard untuk Admin Panel
     /**
