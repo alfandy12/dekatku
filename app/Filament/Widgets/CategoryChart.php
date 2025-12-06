@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Categories;
 use Filament\Facades\Filament;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Database\Eloquent\Builder;
 
 class CategoryChart extends ChartWidget
 {
@@ -22,13 +23,11 @@ class CategoryChart extends ChartWidget
 
     protected function getData(): array
     {
-        $storeUser = Filament::getTenant()->id;
+        $tenantId = Filament::getTenant()->id;
 
-        $products = Product::where('store_id', $storeUser)->get();
-
-        $totalProducts = $products->count();
-
-        $categories = Categories::withCount('products')
+        $categories = Categories::withCount(['products' => function (Builder $query) use ($tenantId) {
+            $query->where('store_id', $tenantId);
+        }])
             ->having('products_count', '>', 0)
             ->orderBy('products_count', 'desc')
             ->limit(8)
@@ -39,8 +38,9 @@ class CategoryChart extends ChartWidget
                 'datasets' => [
                     [
                         'label' => 'Jumlah Produk',
-                        'data' => [0],
-                        'backgroundColor' => ['rgba(156, 163, 175, 0.5)'],
+                        'data' => [1],
+                        'backgroundColor' => ['rgba(229, 231, 235, 0.5)'],
+                        'borderColor' => ['rgba(209, 213, 219, 1)'],
                     ],
                 ],
                 'labels' => ['Belum ada data'],
@@ -72,7 +72,8 @@ class CategoryChart extends ChartWidget
                         'rgb(250, 204, 21)',
                         'rgb(239, 68, 68)',
                     ],
-                    'borderWidth' => 2,
+                    'borderWidth' => 1,
+                    'hoverOffset' => 4,
                 ],
             ],
             'labels' => $categories->pluck('name')->toArray(),
@@ -93,6 +94,15 @@ class CategoryChart extends ChartWidget
                     'position' => 'bottom',
                 ],
             ],
+            'scales' => [
+                'y' => [
+                    'display' => false,
+                ],
+                'x' => [
+                    'display' => false,
+                ],
+            ],
+            'cutout' => '60%',
         ];
     }
 }
