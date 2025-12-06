@@ -4,17 +4,19 @@ namespace App\Trait\Store;
 
 use Filament\Forms\Set;
 use Illuminate\Support\Str;
+use Filament\Forms\Components\Grid;
 use Intervention\Image\ImageManager;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
-use Afsakar\LeafletMapPicker\LeafletMapPicker;
 use Intervention\Image\Drivers\Gd\Driver;
+use Afsakar\LeafletMapPicker\LeafletMapPicker;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
-use Filament\Forms\Components\Grid;
 
 trait FieldRegistration
 {
@@ -97,9 +99,62 @@ trait FieldRegistration
                 ->maxLength(1000)
                 ->disableToolbarButtons([
                     'attachFiles',
+                ]),
+
+            Section::make('Kontak & Media Sosial')
+                ->description('Tambahkan kontak dan link media sosial toko.')
+                ->schema([
+
+                    // 1. REPEATER KONTAK
+                    Repeater::make('contacts')
+                        ->relationship()
+                        ->label('Daftar Kontak')
+                        ->schema([
+                            Select::make('type')
+                                ->label('Tipe')
+                                ->options([
+                                    'whatsapp' => 'WhatsApp',
+                                    'email' => 'Email',
+                                    'phone' => 'Telepon Kantor',
+                                ])
+                                ->required()
+                                ->columnSpan(1),
+
+                            TextInput::make('value')
+                                ->label('Nomor / Email')
+                                ->required()
+                                ->columnSpan(2)
+                                ->placeholder('Contoh: 08123456789 atau toko@email.com'),
+                        ])
+                        ->columns(3)
+                        ->defaultItems(1)
+                        ->addActionLabel('Tambah Contact'),
+
+                    Repeater::make('socials')
+                        ->relationship()
+                        ->label('Media Sosial')
+                        ->schema([
+                            Select::make('platform')
+                                ->options([
+                                    'instagram' => 'Instagram',
+                                    'facebook' => 'Facebook',
+                                    'tiktok' => 'TikTok',
+                                    'twitter' => 'Twitter (X)',
+                                    'website' => 'Website',
+                                ])
+                                ->columnSpan(1),
+
+                            TextInput::make('url')
+                                ->label('Link URL')
+                                ->url()
+                                ->columnSpan(2)
+                                ->placeholder('https://instagram.com/namatoko'),
+                        ])
+                        ->columns(3)
+                        ->defaultItems(0)
+                        ->addActionLabel('Tambah Sosmed'),
                 ])
-                ->required()
-                ->nullable(),
+                ->collapsible(),
         ];
     }
 }
