@@ -71,6 +71,10 @@
 !store/warung-rasa-nusantara/**
 
 
+!store/cita-rasa-lokal/
+!store/cita-rasa-lokal/**
+
+
 // Product
 
 !product/aksesoris/
