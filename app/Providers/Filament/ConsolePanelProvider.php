@@ -36,6 +36,7 @@ class ConsolePanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
+            ->authGuard('web')
             ->default()
             ->id('console')
             ->path('console')

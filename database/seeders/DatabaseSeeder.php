@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             UserStoreSeeder::class,
             CategoriesSeeder::class,
             ProductSeeder::class,
+            AdminSeeder::class,
         ]);
 
         // User::firstOrCreate(
