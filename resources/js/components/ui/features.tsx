@@ -1,4 +1,4 @@
-import { UserPlus, MapPin, MessageSquare } from 'lucide-react';
+import { UserPlus, MapPin,  Sparkles } from 'lucide-react';
 import { Marquee } from './marquee';
 import FeatureCard from './feature-card';
 
@@ -16,7 +16,7 @@ const features = [
   },
   {
     title: 'Chat with AI Assistant',
-    icon: MessageSquare,
+    icon: Sparkles,
     description: 'Dapatkan rekomendasi UMKM terbaik dengan bantuan AI. Tanyakan apapun tentang produk, lokasi, atau kategori bisnis yang Anda cari, dan AI akan membantu menemukan yang paling sesuai.',
   }
 ];

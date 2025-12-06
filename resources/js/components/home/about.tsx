@@ -1,5 +1,6 @@
 import { MapPin, Sparkles, Store, Users } from 'lucide-react';
 import ShinyText from '../ShinyText';
+import { BorderBeam } from '../ui/border-beam';
 
 export default function About() {
     return (
@@ -56,6 +57,18 @@ export default function About() {
                                 </div>
                             </div>
                         </div>
+                        <BorderBeam
+                            duration={6}
+                            size={400}
+                            className="from-transparent via-pink-500 to-transparent"
+                        />
+                        <BorderBeam
+                            duration={6}
+                            delay={3}
+                            size={400}
+                            borderWidth={2}
+                            className="from-transparent via-sky-500 to-transparent"
+                        />
                     </div>
 
                     <div className="group relative overflow-hidden rounded-2xl border border-white/20 bg-white/5 p-8 backdrop-blur-md transition-all duration-300 hover:border-white/30 hover:bg-white/10">
@@ -95,6 +108,18 @@ export default function About() {
                                 </div>
                             </div>
                         </div>
+                        <BorderBeam
+                            duration={6}
+                            size={400}
+                            className="from-transparent via-pink-500 to-transparent"
+                        />
+                        <BorderBeam
+                            duration={6}
+                            delay={3}
+                            size={400}
+                            borderWidth={2}
+                            className="from-transparent via-sky-500 to-transparent"
+                        />
                     </div>
                 </div>
 

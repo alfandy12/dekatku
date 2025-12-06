@@ -145,6 +145,23 @@
     body {
         @apply bg-background text-foreground;
     }
+
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(120, 120, 120, 0.4);
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(120, 120, 120, 0.6);
+    }
 }
 
 .floating-lines-container {
@@ -193,31 +210,25 @@
             background-position: var(--bg-size, 300%) 0;
         }
     }
-    --animate-marquee:
-        marquee var(--duration) infinite linear;
-    --animate-marquee-vertical:
-        marquee-vertical var(--duration) linear infinite
-;
-  @keyframes marquee {
-  from {
-    transform:
-        translateX(0);
+    --animate-marquee: marquee var(--duration) infinite linear;
+    --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+    @keyframes marquee {
+        from {
+            transform: translateX(0);
         }
-  to {
-    transform:
-        translateX(calc(-100% - var(--gap)));
+        to {
+            transform: translateX(calc(-100% - var(--gap)));
         }
     }
-  @keyframes marquee-vertical {
-  from {
-    transform:
-        translateY(0);
+    @keyframes marquee-vertical {
+        from {
+            transform: translateY(0);
         }
-  to {
-    transform:
-        translateY(calc(-100% - var(--gap)));
+        to {
+            transform: translateY(calc(-100% - var(--gap)));
         }
-    }}
+    }
+}
 
 @layer base {
     * {
