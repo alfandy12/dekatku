@@ -6,9 +6,11 @@ use Filament\Forms\Form;
 use App\Trait\Store\FieldRegistration;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Tenancy\EditTenantProfile;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class EditStoreProfile extends EditTenantProfile
 {
+    use HasPageShield;
     public static function getLabel(): string
     {
         return 'Store Profile';
@@ -21,5 +23,4 @@ class EditStoreProfile extends EditTenantProfile
                 FieldRegistration::formFields()
             );
     }
-
 }

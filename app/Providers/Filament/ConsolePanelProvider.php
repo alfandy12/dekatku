@@ -120,14 +120,16 @@ class ConsolePanelProvider extends PanelProvider
             ])
             ->tenantMenuItems([
                 'profile' => MenuItem::make()
-                    // ->visible(false)
+                    ->visible(function (): bool {
+                        return Filament::getTenant() !== null && auth()->user()->can('page_EditStoreProfile');
+                    })
                     ->label('Store Profile'),
                 'member' => MenuItem::make()
                     ->label('Member')
                     ->url(fn(): string => Member::getUrl())
                     ->icon('heroicon-m-user-group')
                     ->visible(function (): bool {
-                        return Filament::getTenant() !== null;
+                        return Filament::getTenant() !== null && auth()->user()->can('page_Member');
                     }),
                 // ...
             ]);
