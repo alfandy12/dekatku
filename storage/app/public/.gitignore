@@ -91,3 +91,15 @@
 
 !product/tanaman/
 !product/tanaman/**
+
+!product/jasa-bangunan/
+!product/jasa-bangunan/**
+
+!product/jasa-elektronik/
+!product/jasa-elektronik/**
+
+!product/jasa-komputer/
+!product/jasa-komputer/**
+
+!product/jasa-otomotif/
+!product/jasa-otomotif/**
