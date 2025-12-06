@@ -453,25 +453,54 @@ class UserStoreSeeder extends Seeder
             $allStores[20]->id => ['is_owner' => true],
         ]);
 
-        $allPermissions = Permission::pluck('id');
+        $allPermissions = Permission::all();
 
-        foreach ($allUsers as $user) {
-            $store = $user->stores()->first();
+        $usersWithStoreOwnerRole = User::whereHas('stores', function ($query) {
+            $query->where('is_owner', true);
+        })->with(['stores' => function ($query) {
+            $query->wherePivot('is_owner', true);
+        }])->get();
 
-            $newRole = Role::create([
-                'name' => 'super_admin_store_' . $store->id,
-                'guard_name' => 'web',
-                'store_id' => $store->id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        $this->command->info("Ditemukan " . $usersWithStoreOwnerRole->count() . " pemilik toko untuk diproses.");
 
-            $newRole->syncPermissions($allPermissions);
 
-            $user->roles()->attach($newRole->id, [
-                'store_id' => $store->id,
-                'model_type' => get_class($user),
-            ]);
+        foreach ($usersWithStoreOwnerRole as $user) {
+
+            $stores = $user->stores;
+
+            if ($stores->isEmpty()) {
+                $this->command->line("Melewatkan User {$user->email}: Tidak ada toko di mana mereka ditandai sebagai pemilik.");
+                continue;
+            }
+
+            foreach ($stores as $store) {
+                $storeId = $store->id;
+
+                setPermissionsTeamId($storeId);
+
+                $superAdminRole = Role::firstOrCreate(
+                    [
+                        'name' => 'super_admin',
+                        'guard_name' => 'web',
+                        'store_id' => $storeId,
+                    ],
+                    [
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                );
+
+                $superAdminRole->syncPermissions($allPermissions);
+
+                $this->command->info("Peran 'super_admin' dibuat/diperbarui untuk ID Toko: {$storeId}.");
+
+                $user->assignRole($superAdminRole);
+
+                $this->command->line("User {$user->email} diberi peran 'super_admin' untuk ID Toko: {$storeId}.");
+            }
         }
+
+        setPermissionsTeamId(null);
+        $this->command->info("Super Admin Seeder selesai.");
     }
 }
