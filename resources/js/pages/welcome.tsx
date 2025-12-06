@@ -12,11 +12,9 @@ export default function Welcome() {
     const [showBackground, setShowBackground] = useState(true);
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
-    const [lineCount] = useState<number[]>(
-        isMobile ? [30, 20, 12] : [10, 15, 12],
-    );
+    const [lineCount] = useState<number[]>(isMobile ? [15, 3, 15] : [2, 5, 12]);
     const [lineDistance] = useState<number[]>(
-        isMobile ? [25, 10, 4] : [2, 40, 4],
+        isMobile ? [12, 10, 5] : [2, 5, 4],
     );
 
     useEffect(() => {
@@ -40,7 +38,7 @@ export default function Welcome() {
                     style={{ height: '100vh' }}
                 >
                     <FloatingLines
-                        enabledWaves={['top', 'bottom']}
+                        enabledWaves={['top', 'middle', 'bottom']}
                         lineCount={lineCount}
                         lineDistance={lineDistance}
                         bendRadius={3}
@@ -58,7 +56,7 @@ export default function Welcome() {
                         </div>
                     </div>
 
-                    <div className="w-full bg-zinc-950!">
+                    <div className="w-full">
                         <div className="mx-auto w-full max-w-7xl p-2 md:p-3">
                             <About />
                             <Store />

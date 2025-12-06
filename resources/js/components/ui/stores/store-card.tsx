@@ -1,6 +1,7 @@
 import { MapPin } from 'lucide-react';
 import { Store } from '@/types/store';
 import { memo } from 'react';
+import { MagicCard } from '../magic-card';
 
 interface StoreCardProps {
     store: Store;
@@ -23,6 +24,10 @@ const StoreCard = memo(({ store, index }: StoreCardProps) => {
     };
 
     return (
+        <MagicCard
+            gradientColor={ "#262626" }
+            className="p-0.5 rounded-2xl"
+        >
         <div
             className="group relative cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/0 p-6 backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:bg-white/10"
             style={{ animationDelay: `${index * 0.1}s` }}
@@ -91,6 +96,7 @@ const StoreCard = memo(({ store, index }: StoreCardProps) => {
                 )}
             </div>
         </div>
+        </MagicCard>
     );
 });
 
