@@ -153,11 +153,12 @@ class UserStoreSeeder extends Seeder
 
         //data store
         $stores = [
+            //makanan-minuman
             [
                 'title' => 'Warung Rasa Nusantara',
                 'type' => 'product',
                 'slug' => 'warung-rasa-nusantara',
-                'url_media' => 'store/makanan-minuman/warung-rasa-nusantara/logo.png',
+                'url_media' => 'store/warung-rasa-nusantara/logo.jpg',
                 'location' => json_encode(['lat' => -6.595000, 'lng' => 106.790000]),
                 'description' => 'Warung makanan tradisional.',
                 'created_at' => now(),
@@ -167,7 +168,7 @@ class UserStoreSeeder extends Seeder
                 'title' => 'Dapur Sehat UMKM',
                 'type' => 'product',
                 'slug' => 'dapur-sehat-umkm',
-                'url_media' => 'store/makanan-minuman/dapur-sehat-umkm/logo.png',
+                'url_media' => 'store/dapur-sehat/logo.jpg',
                 'location' => json_encode(['lat' => -6.592000, 'lng' => 106.785000]),
                 'description' => 'Makanan sehat.',
                 'created_at' => now(),
@@ -177,18 +178,18 @@ class UserStoreSeeder extends Seeder
                 'title' => 'Cita Rasa Lokal',
                 'type' => 'product',
                 'slug' => 'cita-rasa-lokal',
-                'url_media' => 'store/makanan-minuman/cita-rasa-lokal/logo.png',
+                'url_media' => 'store/cita-rasa-lokal/logo.jpg',
                 'location' => json_encode(['lat' => -6.590000, 'lng' => 106.780000]),
                 'description' => 'Makanan khas lokal.',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
-
+            //aksesoris
             [
                 'title' => 'Glitz & Glam Accessories',
                 'type' => 'product',
                 'slug' => 'glitz-glam-accessories',
-                'url_media' => 'store/aksesoris/glitz-glam-accessories/logo.png',
+                'url_media' => 'store/glitz-glam-accessories/logo.jpg',
                 'location' => json_encode(['lat' => -6.593000, 'lng' => 106.788000]),
                 'description' => 'Aksesoris trendi.',
                 'created_at' => now(),
@@ -198,7 +199,7 @@ class UserStoreSeeder extends Seeder
                 'title' => 'Cantik Bersinar',
                 'type' => 'product',
                 'slug' => 'cantik-bersinar',
-                'url_media' => 'store/aksesoris/cantik-bersinar/logo.png',
+                'url_media' => 'store/cantik-bersinar/logo.jpg',
                 'location' => json_encode(['lat' => -6.594500, 'lng' => 106.791000]),
                 'description' => 'Perhiasan cantik.',
                 'created_at' => now(),
@@ -208,18 +209,18 @@ class UserStoreSeeder extends Seeder
                 'title' => 'Fashionista Corner',
                 'type' => 'product',
                 'slug' => 'fashionista-corner',
-                'url_media' => 'store/aksesoris/fashionista-corner/logo.png',
+                'url_media' => 'store/fashionista-corner/logo.jpg',
                 'location' => json_encode(['lat' => -6.596000, 'lng' => 106.792500]),
                 'description' => 'Aksesoris modern.',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
-
+            //tanaman
             [
                 'title' => 'Hijau Asri',
                 'type' => 'product',
                 'slug' => 'hijau-asri',
-                'url_media' => 'store/tanaman/hijau-asri/logo.png',
+                'url_media' => 'store/hijau-asri/logo.jpg',
                 'location' => json_encode(['lat' => -6.597000, 'lng' => 106.784000]),
                 'description' => 'Tanaman hias.',
                 'created_at' => now(),
@@ -229,7 +230,7 @@ class UserStoreSeeder extends Seeder
                 'title' => 'Taman Kecilku',
                 'type' => 'product',
                 'slug' => 'taman-kecilku',
-                'url_media' => 'store/tanaman/taman-kecilku/logo.png',
+                'url_media' => 'store/taman-kecilku/logo.jpg',
                 'location' => json_encode(['lat' => -6.598500, 'lng' => 106.787500]),
                 'description' => 'Tanaman hijau.',
                 'created_at' => now(),
@@ -239,50 +240,52 @@ class UserStoreSeeder extends Seeder
                 'title' => 'Bonsai & Hias',
                 'type' => 'product',
                 'slug' => 'bonsai-dan-hias',
-                'url_media' => 'store/tanaman/bonsai-dan-hias/logo.png',
+                'url_media' => 'store/bonsai-dan-hias/logo.jpg',
                 'location' => json_encode(['lat' => -6.599500, 'lng' => 106.789000]),
                 'description' => 'Bonsai mini.',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
-
+            //jasa elektro
             [
                 'title' => 'Service Elektronik Pramuka',
                 'type' => 'service',
                 'slug' => 'service-elektronik-pramuka',
-                'url_media' => 'store/jasa/service-elektronik-pramuka/logo.png',
+                'url_media' => 'store/service-elektronik-pramuka/logo.jpg',
                 'location' => json_encode(['lat' => -6.600000, 'lng' => 106.783000]),
                 'description' => 'Perbaikan elektronik.',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
+            //jasa tech
             [
                 'title' => 'Reparasi Gadget Center',
                 'type' => 'service',
                 'slug' => 'reparasi-gadget-center',
-                'url_media' => 'store/jasa/reparasi-gadget-center/logo.png',
+                'url_media' => 'store/reparasi-gadget-center/logo.jpg',
                 'location' => json_encode(['lat' => -6.601500, 'lng' => 106.784500]),
                 'description' => 'Servis HP.',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
+            //jasa elektro
             [
                 'title' => 'TeknoFix',
                 'type' => 'service',
                 'slug' => 'teknofix',
-                'url_media' => 'store/jasa/teknofix/logo.png',
+                'url_media' => 'store/teknofix/logo.jpg',
                 'location' => json_encode(['lat' => -6.603000, 'lng' => 106.786000]),
                 'description' => 'Solusi elektronik.',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
 
-            // --- Souvenir (12-14) ---
+            // Souvenir
             [
                 'title' => 'Kenangan Unik',
                 'type' => 'product',
                 'slug' => 'kenangan-unik',
-                'url_media' => 'store/souvenir/kenangan-unik/logo.png',
+                'url_media' => 'store/kenangan-unik/logo.jpg',
                 'location' => json_encode(['lat' => -6.604000, 'lng' => 106.785500]),
                 'description' => 'Souvenir kreatif.',
                 'created_at' => now(),
@@ -292,7 +295,7 @@ class UserStoreSeeder extends Seeder
                 'title' => 'Oleh-Oleh Istimewa',
                 'type' => 'product',
                 'slug' => 'oleh-oleh-istimewa',
-                'url_media' => 'store/souvenir/oleh-oleh-istimewa/logo.png',
+                'url_media' => 'store/oleh-oleh-istimewa/logo.jpg',
                 'location' => json_encode(['lat' => -6.605500, 'lng' => 106.787000]),
                 'description' => 'Oleh-oleh khas.',
                 'created_at' => now(),
@@ -302,18 +305,18 @@ class UserStoreSeeder extends Seeder
                 'title' => 'Charmy Souvenir',
                 'type' => 'product',
                 'slug' => 'charmy-souvenir',
-                'url_media' => 'store/souvenir/charmy-souvenir/logo.png',
+                'url_media' => 'store/charmy-souvenir/logo.jpg',
                 'location' => json_encode(['lat' => -6.607000, 'lng' => 106.788500]),
                 'description' => 'Souvenir lucu.',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
-
+            //jasa tech
             [
                 'title' => 'Dokter Laptop & PC',
                 'type' => 'service',
                 'slug' => 'dokter-laptop-pc',
-                'url_media' => 'store/jasa/dokter-laptop/logo.png',
+                'url_media' => 'store/dokter-laptop/logo.jpg',
                 'location' => json_encode(['lat' => -6.608000, 'lng' => 106.790000]),
                 'description' => 'Service laptop dan rakit PC.',
                 'created_at' => now(),
@@ -323,18 +326,18 @@ class UserStoreSeeder extends Seeder
                 'title' => 'Pusat Komputer Murah',
                 'type' => 'service',
                 'slug' => 'pusat-komputer-murah',
-                'url_media' => 'store/jasa/pusat-komputer/logo.png',
+                'url_media' => 'store/pusat-komputer/logo.jpg',
                 'location' => json_encode(['lat' => -6.609000, 'lng' => 106.791000]),
                 'description' => 'Jual beli dan servis komputer.',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
-
+            //jasa otomotif
             [
                 'title' => 'Bengkel Motor Berkah',
                 'type' => 'service',
                 'slug' => 'bengkel-motor-berkah',
-                'url_media' => 'store/jasa/bengkel-motor/logo.png',
+                'url_media' => 'store/bengkel-motor/logo.jpg',
                 'location' => json_encode(['lat' => -6.610000, 'lng' => 106.792000]),
                 'description' => 'Servis motor terpercaya.',
                 'created_at' => now(),
@@ -344,18 +347,18 @@ class UserStoreSeeder extends Seeder
                 'title' => 'Auto Car Service',
                 'type' => 'service',
                 'slug' => 'auto-car-service',
-                'url_media' => 'store/jasa/auto-car/logo.png',
+                'url_media' => 'store/auto-car/logo.jpg',
                 'location' => json_encode(['lat' => -6.611000, 'lng' => 106.793000]),
                 'description' => 'Bengkel mobil profesional.',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
-
+            //jasa bangunan
             [
                 'title' => 'TB. Bangunan Jaya',
                 'type' => 'service',
                 'slug' => 'tb-bangunan-jaya',
-                'url_media' => 'store/jasa/tb-bangunan/logo.png',
+                'url_media' => 'store/tb-bangunan/logo.jpg',
                 'location' => json_encode(['lat' => -6.612000, 'lng' => 106.794000]),
                 'description' => 'Bahan bangunan dan jasa tukang.',
                 'created_at' => now(),
@@ -365,7 +368,7 @@ class UserStoreSeeder extends Seeder
                 'title' => 'Solusi Renovasi Rumah',
                 'type' => 'service',
                 'slug' => 'solusi-renovasi-rumah',
-                'url_media' => 'store/jasa/solusi-renovasi/logo.png',
+                'url_media' => 'store/solusi-renovasi/logo.jpg',
                 'location' => json_encode(['lat' => -6.613000, 'lng' => 106.795000]),
                 'description' => 'Kontraktor renovasi rumah.',
                 'created_at' => now(),

@@ -126,7 +126,7 @@ class ProductResource extends Resource
 
                                 $fileName = "{$slug}.jpg";
 
-                                $directory = "store/{$store}/products/";
+                                $directory = "store/{$store}/product/";
                                 $path = "{$directory}/{$fileName}";
 
                                 Storage::disk('public')->put($path, (string) $encoded, 'public');
