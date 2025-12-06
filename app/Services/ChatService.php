@@ -10,7 +10,7 @@ class ChatService
 {
     private string $apiKey;
     private string $apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
-    private string $model = 'llama-3.3-70b-versatile';
+    private string $model = 'openai/gpt-oss-120b';
 
     public function __construct()
     {

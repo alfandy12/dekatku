@@ -1,7 +1,15 @@
-export interface Product {
+export interface ProductDetail {
     id: number;
     title: string;
     image: string;
+    price: string;
+    description: string;
+    categories: string[];
+}
+
+export interface MapLocation {
+    lat: number;
+    lng: number;
 }
 
 export interface Store {
@@ -13,7 +21,8 @@ export interface Store {
     jarak: string;
     jarak_meter: number;
     url_media: string | null;
-    products: Product[];
+    location: string;
+    products: ProductDetail[];
 }
 
 export interface NearbyStoresResponse {
