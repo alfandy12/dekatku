@@ -1,0 +1,8 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#f3f4f6"/>
+  <g>
+    <path d="M180 140 L220 140 L240 180 L240 260 L160 260 L160 180 Z" fill="#d1d5db" stroke="#9ca3af" stroke-width="2"/>
+    <circle cx="200" cy="180" r="15" fill="#9ca3af"/>
+    <text x="200" y="310" font-family="Arial" font-size="16" fill="#6b7280" text-anchor="middle">Product Image</text>
+  </g>
+</svg>

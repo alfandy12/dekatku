@@ -2,107 +2,67 @@
 
 namespace App\Policies;
 
-use App\Models\User;
 use App\Models\Role;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class RolePolicy
 {
     use HandlesAuthorization;
 
     /**
-     * Determine whether the user can view any models.
+     * Helper untuk mengecek permission dengan guard.
      */
-    public function viewAny(User $user): bool
+    private function check(Authenticatable $user, string $permission): bool
     {
-        return $user->can('view_any_role');
+        $guard = $user->guard_name ?? config('auth.defaults.guard') ?? 'admin';
+
+        if (method_exists($user, 'hasPermissionTo')) {
+            return $user->hasPermissionTo($permission, $guard);
+        }
+
+        return $user->can($permission);
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Role $role): bool
+    public function viewAny(Authenticatable $user): bool
     {
-        return $user->can('view_role');
+        return $this->check($user, 'view_any_role');
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function view(Authenticatable $user, Role $role): bool
     {
-        return $user->can('create_role');
+        return $this->check($user, 'view_role');
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Role $role): bool
+    public function create(Authenticatable $user): bool
     {
-        return $user->can('update_role');
+        return $this->check($user, 'create_role');
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, Role $role): bool
+    public function update(Authenticatable $user, Role $role): bool
     {
-        return $user->can('delete_role');
+        return $this->check($user, 'update_role');
     }
 
-    /**
-     * Determine whether the user can bulk delete.
-     */
-    public function deleteAny(User $user): bool
+    public function delete(Authenticatable $user, Role $role): bool
     {
-        return $user->can('delete_any_role');
+        return $this->check($user, 'delete_role');
     }
 
-    /**
-     * Determine whether the user can permanently delete.
-     */
-    public function forceDelete(User $user, Role $role): bool
+    public function deleteAny(Authenticatable $user): bool
     {
-        return $user->can('{{ ForceDelete }}');
+        return $this->check($user, 'delete_any_role');
     }
 
-    /**
-     * Determine whether the user can permanently bulk delete.
-     */
-    public function forceDeleteAny(User $user): bool
+    public function forceDelete(Authenticatable $user, Role $role): bool
     {
-        return $user->can('{{ ForceDeleteAny }}');
+        return $this->check($user, 'force_delete_role');
     }
 
-    /**
-     * Determine whether the user can restore.
-     */
-    public function restore(User $user, Role $role): bool
+    public function forceDeleteAny(Authenticatable $user): bool
     {
-        return $user->can('{{ Restore }}');
+        return $this->check($user, 'force_delete_any_role');
     }
 
-    /**
-     * Determine whether the user can bulk restore.
-     */
-    public function restoreAny(User $user): bool
-    {
-        return $user->can('{{ RestoreAny }}');
-    }
-
-    /**
-     * Determine whether the user can replicate.
-     */
-    public function replicate(User $user, Role $role): bool
-    {
-        return $user->can('{{ Replicate }}');
-    }
-
-    /**
-     * Determine whether the user can reorder.
-     */
-    public function reorder(User $user): bool
-    {
-        return $user->can('{{ Reorder }}');
-    }
+   
 }
