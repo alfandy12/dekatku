@@ -2,18 +2,19 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\ProductResource\Pages;
-use App\Filament\Admin\Resources\ProductResource\RelationManagers;
-use App\Models\Product;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Product;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Admin\Resources\ProductResource\Pages;
+use App\Filament\Admin\Resources\ProductResource\RelationManagers;
+use App\Trait\Store\Product\ProductTrait;
 
 class ProductResource extends Resource
 {
@@ -29,104 +30,34 @@ class ProductResource extends Resource
 
     public static function form(Form $form): Form
     {
+
+        $storeField = [
+            Forms\Components\Select::make('store_id')
+                ->label('Store')
+                ->relationship('store', 'title')
+                ->searchable()
+                ->preload()
+                ->required()
+                ->columnSpanFull()
+                ->createOptionForm([
+                    Forms\Components\TextInput::make('title')
+                        ->required()
+                        ->maxLength(255),
+                    Forms\Components\Select::make('type')
+                        ->options([
+                            'product' => 'Product',
+                            'service' => 'Service',
+                        ])
+                        ->required()
+                        ->native(false),
+                ])
+                ->helperText('Select the store this product belongs to'),
+        ];
+
+        $productSchema = ProductTrait::getProductFormSchema();
+
         return $form
-            ->schema([
-                Forms\Components\Section::make('Product Information')
-                    ->description('Enter the basic information about the product')
-                    ->schema([
-                        Forms\Components\Select::make('store_id')
-                            ->label('Store')
-                            ->relationship('store', 'title')
-                            ->searchable()
-                            ->preload()
-                            ->required()
-                            ->columnSpanFull()
-                            ->createOptionForm([
-                                Forms\Components\TextInput::make('title')
-                                    ->required()
-                                    ->maxLength(255),
-                                Forms\Components\Select::make('type')
-                                    ->options([
-                                        'product' => 'Product',
-                                        'service' => 'Service',
-                                    ])
-                                    ->required()
-                                    ->native(false),
-                            ])
-                            ->helperText('Select the store this product belongs to'),
-
-                        Forms\Components\TextInput::make('title')
-                            ->required()
-                            ->maxLength(255)
-                            ->live(onBlur: true)
-                            ->columnSpanFull()
-                            ->placeholder('Enter product name'),
-
-                        Forms\Components\FileUpload::make('url_media')
-                            ->label('Product Image')
-                            ->image()
-                            ->imageEditor()
-                            ->imageEditorAspectRatios([
-                                '16:9',
-                                '4:3',
-                                '1:1',
-                            ])
-                            ->directory('products')
-                            ->disk('public')
-                            ->visibility('public')
-                            ->maxSize(2048)
-                            ->columnSpanFull()
-                            ->helperText('Upload product image (max 2MB)'),
-
-                        Forms\Components\TextInput::make('price')
-                            ->required()
-                            ->numeric()
-                            ->prefix('Rp')
-                            ->minValue(0)
-                            ->step(0.01)
-                            ->placeholder('0.00')
-                            ->helperText('Enter the product price'),
-
-                        Forms\Components\Select::make('categories')
-                            ->label('Categories')
-                            ->multiple()
-                            ->relationship('categories', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->createOptionForm([
-                                Forms\Components\TextInput::make('name')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->unique('categories', 'name'),
-                            ])
-                            ->helperText('Select or create categories for this product'),
-                    ])
-                    ->columns(2),
-
-                Forms\Components\Section::make('Product Description')
-                    ->description('Provide detailed information about the product')
-                    ->schema([
-                        Forms\Components\RichEditor::make('description')
-                            ->label('Description')
-                            ->columnSpanFull()
-                            ->toolbarButtons([
-                                'bold',
-                                'bulletList',
-                                'codeBlock',
-                                'h2',
-                                'h3',
-                                'italic',
-                                'link',
-                                'orderedList',
-                                'redo',
-                                'strike',
-                                'underline',
-                                'undo',
-                            ])
-                            ->placeholder('Enter detailed product description here...'),
-                    ])
-                    ->collapsible(),
-            ]);
+            ->schema(array_merge($storeField, $productSchema));
     }
 
     public static function table(Table $table): Table
@@ -170,8 +101,8 @@ class ProductResource extends Resource
                     ->limit(2)
                     ->tooltip(function (Tables\Columns\TextColumn $column): ?string {
                         $state = $column->getState();
-                        return is_array($state) && count($state) > 2 
-                            ? implode(', ', $state) 
+                        return is_array($state) && count($state) > 2
+                            ? implode(', ', $state)
                             : null;
                     }),
 
@@ -232,11 +163,11 @@ class ProductResource extends Resource
                         return $query
                             ->when(
                                 $data['price_from'],
-                                fn (Builder $query, $price): Builder => $query->where('price', '>=', $price),
+                                fn(Builder $query, $price): Builder => $query->where('price', '>=', $price),
                             )
                             ->when(
                                 $data['price_to'],
-                                fn (Builder $query, $price): Builder => $query->where('price', '<=', $price),
+                                fn(Builder $query, $price): Builder => $query->where('price', '<=', $price),
                             );
                     })
                     ->indicateUsing(function (array $data): array {

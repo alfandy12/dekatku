@@ -64,7 +64,7 @@ class ProductResource extends Resource
                             ->required()
                             ->prefix('Rp')
                             ->placeholder('100000')
-                            ->helperText('Masukkan harga tanpa titik atau koma'),
+                            ->helperText('MasukkanProductTrait harga tanpa titik atau koma'),
 
                         Select::make('categories')
                             ->label('Kategori Produk')

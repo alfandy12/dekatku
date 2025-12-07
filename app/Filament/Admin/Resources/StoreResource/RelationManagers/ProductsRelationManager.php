@@ -3,13 +3,14 @@
 namespace App\Filament\Admin\Resources\StoreResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Support\Enums\FontWeight;
+use Illuminate\Database\Eloquent\Builder;
+use App\Trait\Store\Product\ProductTrait;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\RelationManagers\RelationManager;
 
 class ProductsRelationManager extends RelationManager
 {
@@ -22,67 +23,7 @@ class ProductsRelationManager extends RelationManager
     public function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\Section::make('Product Information')
-                    ->schema([
-                        Forms\Components\TextInput::make('title')
-                            ->required()
-                            ->maxLength(255)
-                            ->columnSpanFull()
-                            ->placeholder('Enter product name'),
-
-                        Forms\Components\FileUpload::make('url_media')
-                            ->label('Product Image')
-                            ->image()
-                            ->imageEditor()
-                            ->directory('products')
-                            ->disk('public')
-                            ->visibility('public')
-                            ->maxSize(2048)
-                            ->columnSpanFull(),
-
-                        Forms\Components\TextInput::make('price')
-                            ->required()
-                            ->numeric()
-                            ->prefix('Rp')
-                            ->minValue(0)
-                            ->step(0.01)
-                            ->placeholder('0.00'),
-
-                        Forms\Components\Select::make('categories')
-                            ->label('Categories')
-                            ->multiple()
-                            ->relationship('categories', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->createOptionForm([
-                                Forms\Components\TextInput::make('name')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->unique('categories', 'name'),
-                            ]),
-                    ])
-                    ->columns(2),
-
-                Forms\Components\Section::make('Description')
-                    ->schema([
-                        Forms\Components\RichEditor::make('description')
-                            ->label('')
-                            ->columnSpanFull()
-                            ->toolbarButtons([
-                                'bold',
-                                'bulletList',
-                                'italic',
-                                'link',
-                                'orderedList',
-                                'redo',
-                                'strike',
-                                'underline',
-                                'undo',
-                            ]),
-                    ])
-                    ->collapsible(),
-            ]);
+            ->schema(ProductTrait::getProductFormSchema());
     }
 
     public function table(Table $table): Table
@@ -144,11 +85,11 @@ class ProductsRelationManager extends RelationManager
                         return $query
                             ->when(
                                 $data['price_from'],
-                                fn (Builder $query, $price): Builder => $query->where('price', '>=', $price),
+                                fn(Builder $query, $price): Builder => $query->where('price', '>=', $price),
                             )
                             ->when(
                                 $data['price_to'],
-                                fn (Builder $query, $price): Builder => $query->where('price', '<=', $price),
+                                fn(Builder $query, $price): Builder => $query->where('price', '<=', $price),
                             );
                     }),
             ])

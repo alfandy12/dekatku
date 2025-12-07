@@ -31,14 +31,6 @@ class UsersRelationManager extends RelationManager
                             ->columnSpanFull(),
                     ]),
 
-                Forms\Components\Section::make('Pivot Data')
-                    ->schema([
-                        Forms\Components\Toggle::make('is_owner')
-                            ->label('Is Owner')
-                            ->helperText('Mark this user as the store owner')
-                            ->default(false),
-                    ])
-                    ->columns(1),
             ]);
     }
 
@@ -68,25 +60,11 @@ class UsersRelationManager extends RelationManager
                     ->falseColor('gray')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('roles.name')
-                    ->label('Roles')
+               Tables\Columns\TextColumn::make('roles.name')
+                    ->label('Role')
                     ->badge()
-                    ->color('primary')
-                    ->separator(',')
-                    ->wrap(),
-
-                Tables\Columns\TextColumn::make('permissions.name')
-                    ->label('Permissions')
-                    ->badge()
-                    ->color('info')
-                    ->separator(',')
-                    ->limit(3)
-                    ->tooltip(function (Tables\Columns\TextColumn $column): ?string {
-                        $state = $column->getState();
-                        return is_array($state) && count($state) > 3
-                            ? implode(', ', $state)
-                            : null;
-                    }),
+                    ->searchable()
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_owner')
@@ -98,11 +76,11 @@ class UsersRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\AttachAction::make()
                     ->preloadRecordSelect()
-                    ->form(fn (Tables\Actions\AttachAction $action): array => [
+                    ->form(fn(Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect(),
                         Forms\Components\Toggle::make('is_owner')
                             ->label('Is Owner')
-                            ->helperText('Mark this user as the store owner')
+                            ->helperText('If you activate it while the shop already has an owner, the ownership will transfer to the new owner.')
                             ->default(false),
                         Forms\Components\Section::make('Assign Roles & Permissions')
                             ->schema([
@@ -111,19 +89,53 @@ class UsersRelationManager extends RelationManager
                                     ->label('Roles')
                                     ->multiple()
                                     ->relationship(
-                                        'roles',
+                                        'stores.roles',
                                         'name',
-                                        fn (Builder $query) => $query
+                                        fn(Builder $query) => $query
                                             ->where('roles.guard_name', 'web')
                                             ->where('roles.store_id', $this->getOwnerRecord()->id)
                                     )
                                     ->preload()
                                     ->searchable()
-                                    ->helperText('Assign roles to this user for the store'),
+                                    ->helperText('Assign roles to this user for the store')
+                                    ->createOptionForm([
+                                        Forms\Components\TextInput::make('name')
+                                            ->label('Role Name')
+                                            ->required(),
+
+                                        Forms\Components\Select::make('permissions')
+                                            ->label('Permissions')
+                                            ->multiple()
+                                            ->preload()
+                                            ->searchable()
+                                            // The options return [ID => Name]
+                                            ->options(function () {
+                                                return Permission::query()
+                                                    ->where('guard_name', 'web')
+                                                    ->pluck('name', 'id');
+                                            })
+                                            ->helperText('Select permissions for this role'),
+                                    ])
+                                    ->createOptionUsing(function (array $data) {
+                                        $storeId = $this->getOwnerRecord()->id;
+
+                                        $role = Role::create([
+                                            'name'       => $data['name'],
+                                            'guard_name' => 'web',
+                                            'store_id'   => $storeId,
+                                        ]);
+                                        $permissions = Permission::whereIn('id', $data['permissions'])->get();
+
+                                        setPermissionsTeamId($storeId);
+                                        $role->syncPermissions($permissions);
+
+                                        return $role->id;
+                                    }),
 
                             ])
                             ->columns(1),
-                    ]),
+                    ])
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
@@ -133,26 +145,7 @@ class UsersRelationManager extends RelationManager
                             ->helperText('Mark this user as the store owner')
                             ->default(false),
                         Forms\Components\Section::make('Manage Roles & Permissions')
-                            ->schema([
-                                Forms\Components\Select::make('roles')
-                                    ->label('Roles')
-                                    ->multiple()
-                                    ->relationship(
-                                        'roles',
-                                        'name',
-                                        fn (Builder $query) => $query
-                                            ->where('roles.guard_name', 'web')
-                                            ->where('roles.store_id', $this->getOwnerRecord()->id)
-                                    )
-                                    ->preload()
-                                    ->searchable(),
-                                Forms\Components\Select::make('permissions')
-                                    ->label('Direct Permissions')
-                                    ->multiple()
-                                    ->relationship('permissions', 'name')
-                                    ->preload()
-                                    ->searchable(),
-                            ])
+                            ->schema($this->formRoles())
                             ->columns(1),
                     ]),
                 Tables\Actions\DetachAction::make(),
@@ -162,5 +155,57 @@ class UsersRelationManager extends RelationManager
                     Tables\Actions\DetachBulkAction::make(),
                 ]),
             ]);
+    }
+
+    private function formRoles()
+    {
+        return [
+
+            Forms\Components\Select::make('roles')
+                ->label('Roles')
+                ->multiple()
+                ->relationship(
+                    'stores.roles',
+                    'name',
+                    fn(Builder $query) => $query
+                        ->where('roles.guard_name', 'web')
+                        ->where('roles.store_id', $this->getOwnerRecord()->id)
+                )
+                ->preload()
+                ->searchable()
+                ->helperText('Assign roles to this user for the store')
+                ->createOptionForm([
+                    Forms\Components\TextInput::make('name')
+                        ->label('Role Name')
+                        ->required(),
+
+                    Forms\Components\Select::make('permissions')
+                        ->label('Permissions')
+                        ->multiple()
+                        ->preload()
+                        ->searchable()
+                        ->options(function () {
+                            return Permission::query()
+                                ->where('guard_name', 'web')
+                                ->pluck('name', 'id');
+                        })
+                        ->helperText('Select permissions for this role'),
+                ])
+                ->createOptionUsing(function (array $data) {
+                    $storeId = $this->getOwnerRecord()->id;
+
+                    $role = Role::create([
+                        'name'       => $data['name'],
+                        'guard_name' => 'web',
+                        'store_id'   => $storeId,
+                    ]);
+                    $permissions = Permission::whereIn('id', $data['permissions'])->get();
+
+                    setPermissionsTeamId($storeId);
+                    $role->syncPermissions($permissions);
+
+                    return $role->id;
+                }),
+        ];
     }
 }
