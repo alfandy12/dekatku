@@ -38,6 +38,19 @@ class StoreTransformer
         ];
     }
 
+    public function transformForSearch(Store $store, string $distance, int $distanceInMeters): array
+    {
+        return [
+            'id' => $store->id,
+            'nama_toko' => $store->title,
+            'slug' => $store->slug,
+            'type' => $store->type,
+            'jarak' => $distance,
+            'jarak_meter' => $distanceInMeters,
+            'url_media' => $store->url_media,
+        ];
+    }
+
 
     private function transformProducts($products): array
     {
@@ -64,4 +77,33 @@ class StoreTransformer
             ];
         })->toArray();
     }
+
+    public function transformForAI(Store $store, string $distance): array
+    {
+        return [
+            'id' => $store->id,
+            'nama_toko' => $store->title,
+            'slug' => $store->slug,
+            'description' => $store->description,
+            'type' => $store->type,
+            'jarak' => $distance,
+            'products' => $this->transformProductsForAI($store->products),
+        ];
+
+    }
+
+    private function transformProductsForAI($products): array
+    {
+        return $products->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'title' => $product->title,
+                'price' => $product->price,
+                'description' => $product->description,
+                'categories' => $product->categories->pluck('name')->toArray(),
+                'image' => $product->url_media,
+            ];
+        })->toArray();
+    }
+    
 }

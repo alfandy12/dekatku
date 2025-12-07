@@ -76,7 +76,7 @@ export default function Index() {
     return (
         <StoreLayout>
             <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     {allStores.map((store, index) => (
                         <div key={`${store.id}-${index}`}>
                             <StoreCard store={store} index={index} />
@@ -85,7 +85,7 @@ export default function Index() {
                 </div>
 
                 {isFetchingNextPage && (
-                    <div className="grid grid-cols-2 gap-5">
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                         {[1, 2].map((i) => (
                             <StoreSkeleton key={i} />
                         ))}

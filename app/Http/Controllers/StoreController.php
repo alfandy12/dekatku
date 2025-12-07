@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ChatRequest;
+use App\Http\Requests\SearchStoreRequest;
 use App\Services\ChatService;
 use App\Services\StoreService;
 use Illuminate\Http\JsonResponse;
@@ -16,24 +17,19 @@ class StoreController extends Controller
 {
     public function __construct(
         private ChatService $chatService,
-        private StoreService $storeService
+        private StoreService $storeService,
+       
     ) {
         Log::info('StoreController: Services injected successfully');
     }
 
-    /**
-     * Handle chat requests
-     */
     public function chat(ChatRequest $request): JsonResponse
     {
-      
-
         try {
             $validated = $request->validated();
             $sessionId = $request->session()->getId();
             
-        
-            $nearbyStores = $this->storeService->getStoresForChat($sessionId);
+            $nearbyStores = $this->storeService->getStoresForChatWithFullDetails($sessionId);
             
             Log::info('Stores loaded:', ['count' => count($nearbyStores)]);
 
@@ -41,7 +37,6 @@ class StoreController extends Controller
                 'nearby_stores' => $nearbyStores,
                 'user_location' => $request->session()->get('user_location'),
             ];
-
 
             if (isset($validated['history']) && count($validated['history']) > 0) {
                 $messages = $validated['history'];
@@ -113,6 +108,7 @@ class StoreController extends Controller
         return Inertia::render('stores/index');
     }
 
+ 
     public function show(Request $request, string $slug): JsonResponse|Response
     {
         $sessionId = $request->session()->getId();
@@ -123,5 +119,18 @@ class StoreController extends Controller
         }
         
         return Inertia::render('stores/detail', ['slug' => $slug]);
+    }
+
+    public function search(SearchStoreRequest $request): JsonResponse
+    {
+        $sessionId = $request->session()->getId();
+        $query = $request->getQuery();
+        
+        $data = $this->storeService->searchStores($query, $sessionId);
+        
+        return response()->json([
+            'stores' => $data,
+            'query' => $query
+        ]);
     }
 }

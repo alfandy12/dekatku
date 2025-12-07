@@ -16,7 +16,7 @@ const StoreCard = memo(({ store, index }: StoreCardProps) => {
     };
 
     const handleShowDetail =  (slug: string) => {
-        return router.get(`/umkm/${slug}`)
+        return router.visit(`/umkm/${slug}`)
     }
 
     const getProductGrid = (productCount: number) => {

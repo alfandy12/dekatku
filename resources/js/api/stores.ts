@@ -1,3 +1,4 @@
+import { SearchResult } from '@/types/search';
 import { Store, StorePaginateResponse } from '@/types/store';
 import axios from 'axios';
 
@@ -27,6 +28,13 @@ export const storesApi = {
 
     getStoreBySlug: async (slug: string): Promise<Store> => {
         const response = await api.get<Store>(`/umkm/${slug}`);
+        return response.data;
+    },
+
+    seachStores: async (query: string): Promise<SearchResult> => {
+        const response = await api.get<SearchResult>('/umkm/search/q', {
+            params: { q: query },
+        });
         return response.data;
     },
 };

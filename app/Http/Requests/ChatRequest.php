@@ -16,20 +16,22 @@ class ChatRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'message' => 'required|string|max:1000',
-            'history' => 'nullable|array',
+            'message' => [
+                'required',
+                'string',
+                'max:1000',
+                'regex:/^[a-zA-Z0-9\s\.\,\?\!\-\_\(\)]+$/u', 
+            ],
+            'history' => 'nullable|array|max:10', 
             'history.*.role' => 'nullable|string|in:user,assistant',
-            'history.*.content' => 'nullable|string',
+            'history.*.content' => 'nullable|string|max:2000',
         ];
     }
 
-  
     public function messages(): array
     {
         return [
-            'message.required' => 'Pesan tidak boleh kosong',
-            'message.max' => 'Pesan terlalu panjang (maksimal 1000 karakter)',
-            'history.array' => 'Format riwayat chat tidak valid',
+            'message.regex' => 'Pesan mengandung karakter yang tidak diizinkan.',
         ];
     }
 }

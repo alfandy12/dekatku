@@ -10,7 +10,7 @@ export default function ChatBot() {
 
     return (
         <div
-            className={`fixed z-50 ${
+            className={`fixed z-[999] ${
                 isOpen
                     ? 'inset-0 flex items-center justify-center bg-zinc-950/70'
                     : 'right-5 bottom-5'

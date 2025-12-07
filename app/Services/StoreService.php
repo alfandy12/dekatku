@@ -15,7 +15,6 @@ class StoreService
         private DistanceService $distanceService
     ) {}
 
-
     public function getNearbyStores(string $sessionId, ?int $limit = null): Collection
     {
         $cacheKey = $this->getCacheKey($sessionId, $limit);
@@ -32,12 +31,10 @@ class StoreService
                 return $this->transformer->transformForList($store, $distance);
             });
 
-        
             $sortedStores = $transformedStores->sortBy(function ($store) {
                 return $this->distanceService->distanceToMeters($store['jarak']);
             })->values();
 
-        
             $sortedStores = $sortedStores->map(function ($store) {
                 $store['jarak_meter'] = $this->distanceService->distanceToMeters($store['jarak']);
                 return $store;
@@ -75,13 +72,14 @@ class StoreService
         });
     }
 
-
+ 
     public function getStoreDetail(string $slug, string $sessionId): array
     {
         $cacheKey = "store_detail_{$slug}_{$sessionId}";
         
         return Cache::remember($cacheKey, 3600, function() use ($slug, $sessionId) {
             $store = $this->repository->findBySlugWithRelations($slug);
+            
             
             $distance = $this->distanceService->generateRandomDistance(
                 $store->id, 
@@ -94,16 +92,32 @@ class StoreService
         });
     }
 
-    public function getStoresForChat(string $sessionId, int $limit = 15): array
+    public function getStoresForChatWithFullDetails(string $sessionId, int $limit = 15): array
     {
-        $cacheKey = "nearby_stores_{$sessionId}_for_chat";
+        $cacheKey = "ai_stores_{$sessionId}_full_details";
         
         return Cache::remember($cacheKey, 3600, function() use ($sessionId, $limit) {
-            return $this->getNearbyStores($sessionId, $limit)->toArray();
+            $stores = $this->repository->getAllWithFullProductDetails();
+            
+            $transformedStores = $stores->map(function ($store) use ($sessionId) {
+                $distance = $this->distanceService->generateRandomDistance(
+                    $store->id, 
+                    $sessionId
+                );
+                
+                return $this->transformer->transformForAI($store, $distance);
+            });
+
+            $sortedStores = $transformedStores->sortBy(function ($store) {
+                return $this->distanceService->distanceToMeters($store['jarak']);
+            })->values();
+
+            return $sortedStores->take($limit)->toArray();
         });
     }
 
-  
+    
+
     private function getCacheKey(string $sessionId, ?int $limit = null): string
     {
         if ($limit) {
@@ -111,5 +125,45 @@ class StoreService
         }
         
         return "nearby_stores_{$sessionId}_all";
+    }
+
+    public function searchStores(string $query, string $sessionId, int $limit = 10): array
+    {
+    
+        $query = trim($query);
+        
+        if (empty($query)) {
+            return [];
+        }
+
+        $cacheKey = "store_search_" . md5($query . $sessionId . $limit);
+        
+        return Cache::remember($cacheKey, 1800, function() use ($query, $sessionId, $limit) {
+            $stores = $this->repository->search($query, $limit);
+            
+            if ($stores->isEmpty()) {
+                return [];
+            }
+
+            $transformedStores = $stores->map(function ($store) use ($sessionId) {
+                $distance = $this->distanceService->generateRandomDistance(
+                    $store->id, 
+                    $sessionId
+                );
+                
+                $distanceInMeters = $this->distanceService->distanceToMeters($distance);
+                
+                return $this->transformer->transformForSearch(
+                    $store, 
+                    $distance, 
+                    $distanceInMeters
+                );
+            });
+
+            return $transformedStores
+                ->sortBy('jarak_meter')
+                ->values()
+                ->toArray();
+        });
     }
 }
