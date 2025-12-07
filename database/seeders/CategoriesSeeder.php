@@ -14,33 +14,43 @@ class CategoriesSeeder extends Seeder
     {
         $categories = [
             [
-                'name' => 'Makanan'
+                'name' => 'Makanan',
+                'slug' => 'makanan'
             ],
             [
-                'name' => 'Minuman'
+                'name' => 'Minuman',
+                'slug' => 'minuman'
             ],
             [
-                'name' => 'Aksesoris'
+                'name' => 'Aksesoris',
+                'slug' => 'aksesoris'
             ],
             [
-                'name' => 'Tanaman'
+                'name' => 'Tanaman',
+                'slug' => 'tanaman'
             ],
             [
-                'name' => 'Souvenir'
+                'name' => 'Souvenir',
+                'slug' => 'souvenir'
             ],
             [
-                'name' => 'Jasa Elektronik'
+                'name' => 'Jasa Elektronik',
+                'slug' => 'jasa-elektronik'
             ],
             [
-                'name' => 'Jasa Komputer'
+                'name' => 'Jasa Komputer',
+                'slug' => 'jasa-komputer'
             ],
             [
-                'name' => 'Jasa Bangunan'
+                'name' => 'Jasa Bangunan',
+                'slug' => 'jasa-bangunan'
             ],
             [
-                'name' => 'Jasa Otomotif'
+                'name' => 'Jasa Otomotif',
+                'slug' => 'jasa-otomotif'
             ],
         ];
+
 
 
         foreach ($categories as $category) {

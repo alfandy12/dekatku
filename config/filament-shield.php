@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'panel_guard' => null,
+
     'shield_resource' => [
         'should_register_navigation' => true,
         'slug' => 'shield/roles',
@@ -74,7 +76,8 @@ return [
         ],
 
         'widgets' => [
-            'AccountWidget', 'FilamentInfoWidget',
+            'AccountWidget',
+            'FilamentInfoWidget',
         ],
 
         'resources' => [],

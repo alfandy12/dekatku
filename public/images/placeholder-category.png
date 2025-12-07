@@ -1,0 +1,8 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#ede9fe"/>
+  <g>
+    <path d="M200 120 L280 160 L280 240 L200 280 L120 240 L120 160 Z" fill="#c4b5fd" stroke="#a78bfa" stroke-width="3"/>
+    <circle cx="200" cy="200" r="30" fill="#a78bfa"/>
+    <text x="200" y="330" font-family="Arial" font-size="16" fill="#7c3aed" text-anchor="middle">Category</text>
+  </g>
+</svg>
