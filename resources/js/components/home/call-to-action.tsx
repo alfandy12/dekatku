@@ -1,3 +1,4 @@
+import { Link } from '@inertiajs/react';
 import { Store } from 'lucide-react';
 import GradientButton from '../ui/gradient-button';
 
@@ -25,7 +26,7 @@ export default function CallToAction() {
                         </p>
 
                         <GradientButton className="px-8 py-4 text-lg">
-                            Daftar Sekarang
+                            <Link href={'/register'}>Daftar Sekarang</Link>
                         </GradientButton>
                     </div>
                 </div>

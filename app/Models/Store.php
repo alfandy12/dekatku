@@ -50,6 +50,16 @@ class Store extends Model implements HasName, HasAvatar
         return $this->hasMany(Product::class);
     }
 
+    public function socials(): HasMany
+    {
+        return $this->hasMany(Social::class);
+    }
+
+    public function contacts(): HasMany
+    {
+        return $this->hasMany(Contact::class);
+    }
+
     public function getTenants($user): array
     {
         return $user->stores->all();

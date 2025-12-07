@@ -4,23 +4,78 @@
 !product/
 
 # dummy store 
-!store/toko-elektronik-pramuka/
-!store/toko-elektronik-pramuka/**
+!store/auto-car/
+!store/auto-car/**
 
 !store/supermarket-utama/
 !store/supermarket-utama/**
 
-!store/warung-kopi-matraman/
-!store/warung-kopi-matraman/**
+!store/bengkel-motor/
+!store/bengkel-motor/**
 
-!store/fashion-store-rawamangun/
-!store/fashion-store-rawamangun/**
+!store/bonsai-dan-hias/
+!store/bonsai-dan-hias/**
 
-!store/toko-buku-salemba/
-!store/toko-buku-salemba/**
+!store/cantik-bersinar/
+!store/cantik-bersinar/**
 
-!store/minimarket-sejahtera-matraman/
-!store/minimarket-sejahtera-matraman/**
+!store/charmy-souvenir/
+!store/charmy-souvenir/**
+
+!store/citra-rasa-lokal/
+!store/citra-rasa-lokal/**
+
+!store/dapur-sehat/
+!store/dapur-sehat/**
+
+!store/dokter-laptop/
+!store/dokter-laptop/**
+
+!store/fashionista-corner/
+!store/fashionista-corner/**
+
+!store/glitz-glam-accessories/
+!store/glitz-glam-accessories/**
+
+!store/hijau-asri/
+!store/hijau-asri/**
+
+!store/kenangan-unik/
+!store/kenangan-unik/**
+
+!store/oleh-oleh-istimewa/
+!store/oleh-oleh-istimewa/**
+
+!store/pusat-komputer/
+!store/pusat-komputer/**
+
+!store/reparasi-gadget-center/
+!store/reparasi-gadget-center/**
+
+!store/service-elektronik-pramuka/
+!store/service-elektronik-pramuka/**
+
+!store/solusi-renovasi/
+!store/solusi-renovasi/**
+
+!store/taman-kecilku/
+!store/taman-kecilku/**
+
+!store/tb-bangunan/
+!store/tb-bangunan/**
+
+!store/teknofix/
+!store/teknofix/**
+
+!store/warung-rasa-nusantara/
+!store/warung-rasa-nusantara/**
+
+
+!store/cita-rasa-lokal/
+!store/cita-rasa-lokal/**
+
+
+// Product
 
 !product/aksesoris/
 !product/aksesoris/**
@@ -36,3 +91,15 @@
 
 !product/tanaman/
 !product/tanaman/**
+
+!product/jasa-bangunan/
+!product/jasa-bangunan/**
+
+!product/jasa-elektronik/
+!product/jasa-elektronik/**
+
+!product/jasa-komputer/
+!product/jasa-komputer/**
+
+!product/jasa-otomotif/
+!product/jasa-otomotif/**

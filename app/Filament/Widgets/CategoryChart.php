@@ -1,0 +1,108 @@
+<?php
+
+namespace App\Filament\Widgets;
+
+use App\Models\Product;
+use App\Models\Categories;
+use Filament\Facades\Filament;
+use Filament\Widgets\ChartWidget;
+use Illuminate\Database\Eloquent\Builder;
+
+class CategoryChart extends ChartWidget
+{
+    protected static ?string $heading = 'Distribusi Produk per Kategori';
+
+    protected static ?string $description = 'Jumlah produk di setiap kategori';
+
+    protected static ?int $sort = 3;
+
+    protected int | string | array $columnSpan = [
+        'md' => 1,
+        'xl' => 1,
+    ];
+
+    protected function getData(): array
+    {
+        $tenantId = Filament::getTenant()->id;
+
+        $categories = Categories::withCount(['products' => function (Builder $query) use ($tenantId) {
+            $query->where('store_id', $tenantId);
+        }])
+            ->having('products_count', '>', 0)
+            ->orderBy('products_count', 'desc')
+            ->limit(8)
+            ->get();
+
+        if ($categories->isEmpty()) {
+            return [
+                'datasets' => [
+                    [
+                        'label' => 'Jumlah Produk',
+                        'data' => [1],
+                        'backgroundColor' => ['rgba(229, 231, 235, 0.5)'],
+                        'borderColor' => ['rgba(209, 213, 219, 1)'],
+                    ],
+                ],
+                'labels' => ['Belum ada data'],
+            ];
+        }
+
+        return [
+            'datasets' => [
+                [
+                    'label' => 'Jumlah Produk',
+                    'data' => $categories->pluck('products_count')->toArray(),
+                    'backgroundColor' => [
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(251, 146, 60, 0.8)',
+                        'rgba(168, 85, 247, 0.8)',
+                        'rgba(236, 72, 153, 0.8)',
+                        'rgba(20, 184, 166, 0.8)',
+                        'rgba(250, 204, 21, 0.8)',
+                        'rgba(239, 68, 68, 0.8)',
+                    ],
+                    'borderColor' => [
+                        'rgb(59, 130, 246)',
+                        'rgb(16, 185, 129)',
+                        'rgb(251, 146, 60)',
+                        'rgb(168, 85, 247)',
+                        'rgb(236, 72, 153)',
+                        'rgb(20, 184, 166)',
+                        'rgb(250, 204, 21)',
+                        'rgb(239, 68, 68)',
+                    ],
+                    'borderWidth' => 1,
+                    'hoverOffset' => 4,
+                ],
+            ],
+            'labels' => $categories->pluck('name')->toArray(),
+        ];
+    }
+
+    protected function getType(): string
+    {
+        return 'doughnut';
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            'plugins' => [
+                'legend' => [
+                    'display' => true,
+                    'position' => 'bottom',
+                ],
+            ],
+            'scales' => [
+                'y' => [
+                    'display' => false,
+                ],
+                'x' => [
+                    'display' => false,
+                ],
+            ],
+            'cutout' => '60%',
+        ];
+    }
+}

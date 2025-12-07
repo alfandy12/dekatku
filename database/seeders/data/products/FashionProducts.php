@@ -11,21 +11,21 @@ class FashionProducts
                 'title' => 'Batik Wanita',
                 'price' => 120000,
                 'description' => 'Batik wanita motif tradisional dengan bahan katun premium',
-                'url_media' => 'product/fashion/batik-wanita.jpg',
+                'url_media' => 'product/fashion/blouse.jpg',
                 'categories' => ['Fashion', 'Kecantikan']
             ],
             [
                 'title' => 'Batik Pria Modern',
                 'price' => 110000,
                 'description' => 'Batik pria dengan desain modern cocok untuk acara formal',
-                'url_media' => 'product/fashion/batik.jpg',
+                'url_media' => 'product/fashion/kemeja-batik.jpg',
                 'categories' => ['Fashion']
             ],
             [
                 'title' => 'Celana Panjang Formal',
                 'price' => 90000,
                 'description' => 'Celana panjang bahan kain berkualitas untuk kerja',
-                'url_media' => 'product/fashion/celana.jpg',
+                'url_media' => 'product/fashion/chino.jpg',
                 'categories' => ['Fashion']
             ],
             [
@@ -39,14 +39,14 @@ class FashionProducts
                 'title' => 'Jaket Pria Casual',
                 'price' => 110000,
                 'description' => 'Jaket casual untuk tampil santai namun tetap stylish',
-                'url_media' => 'product/fashion/jaket2.jpg',
+                'url_media' => 'product/fashion/bomber.jpg',
                 'categories' => ['Fashion']
             ],
             [
                 'title' => 'Kemeja Lengan Panjang',
                 'price' => 110000,
                 'description' => 'Kemeja formal lengan panjang berbagai warna',
-                'url_media' => 'product/fashion/kemeja.jpg',
+                'url_media' => 'product/fashion/blazer.jpg',
                 'categories' => ['Fashion']
             ],
             [

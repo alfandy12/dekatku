@@ -1,6 +1,8 @@
 import { MapPin } from 'lucide-react';
 import { Store } from '@/types/store';
 import { memo } from 'react';
+import { MagicCard } from '../magic-card';
+import { router } from '@inertiajs/react';
 
 interface StoreCardProps {
     store: Store;
@@ -13,7 +15,9 @@ const StoreCard = memo(({ store, index }: StoreCardProps) => {
         return text.slice(0, maxLength) + '...';
     };
 
-    
+    const handleShowDetail =  (slug: string) => {
+        return router.visit(`/umkm/${slug}`)
+    }
 
     const getProductGrid = (productCount: number) => {
         if (productCount === 2) return 'grid-cols-2';
@@ -23,7 +27,12 @@ const StoreCard = memo(({ store, index }: StoreCardProps) => {
     };
 
     return (
+        <MagicCard
+            gradientColor={ "#262626" }
+            className="p-0.5 rounded-2xl"
+        >
         <div
+            onClick={() => handleShowDetail(store.slug)}
             className="group relative cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/0 p-6 backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:bg-white/10"
             style={{ animationDelay: `${index * 0.1}s` }}
         >
@@ -33,7 +42,7 @@ const StoreCard = memo(({ store, index }: StoreCardProps) => {
     
                 <div className="mb-4 flex items-start gap-4">
                     <img
-                        src={store.url_media || '/placeholder-store.jpg'}
+                        src={`/storage/${store.url_media}` }
                         alt={store.nama_toko}
                         className="h-16 w-16 flex-shrink-0 rounded-full border-2 border-white/20 object-cover"
                         loading="lazy"
@@ -73,7 +82,7 @@ const StoreCard = memo(({ store, index }: StoreCardProps) => {
                                 }`}
                             >
                                 <img
-                                    src={product.image}
+                                    src={`/storage/${product.image}`}
                                     alt={product.title || `Product ${idx + 1}`}
                                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                                     loading="lazy"
@@ -91,6 +100,7 @@ const StoreCard = memo(({ store, index }: StoreCardProps) => {
                 )}
             </div>
         </div>
+        </MagicCard>
     );
 });
 

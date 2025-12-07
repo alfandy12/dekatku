@@ -5,18 +5,16 @@ import CallToAction from '@/components/home/call-to-action';
 import Footer from '@/components/home/footer';
 import Header from '@/components/home/header';
 import Store from '@/components/home/store';
-import { Head } from '@inertiajs/react';
+import HomeLayout from '@/layouts/app/home-layout';
 import { useEffect, useState } from 'react';
 
 export default function Welcome() {
     const [showBackground, setShowBackground] = useState(true);
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
-    const [lineCount] = useState<number[]>(
-        isMobile ? [30, 20, 12] : [10, 15, 12],
-    );
+    const [lineCount] = useState<number[]>(isMobile ? [15, 3, 15] : [2, 5, 12]);
     const [lineDistance] = useState<number[]>(
-        isMobile ? [25, 10, 4] : [2, 40, 4],
+        isMobile ? [12, 10, 5] : [2, 5, 4],
     );
 
     useEffect(() => {
@@ -31,19 +29,7 @@ export default function Welcome() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
     return (
-        <>
-            <Head title="Deketku">
-                <link rel="preconnect" href="https://fonts.googleapis.com" />
-                <link
-                    rel="preconnect"
-                    href="https://fonts.gstatic.com"
-                    crossOrigin="anonymous"
-                />
-                <link
-                    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-                    rel="stylesheet"
-                />
-            </Head>
+        <HomeLayout>
             <div className="relative w-full">
                 <div
                     className={`absolute top-0 h-screen w-full [mask-image:linear-gradient(to_bottom,#000000_0%,#000000_50%,rgba(0,0,0,0.5)_94%,transparent_100%)] transition-opacity duration-700 ease-in-out md:h-[110vh] ${
@@ -52,7 +38,7 @@ export default function Welcome() {
                     style={{ height: '100vh' }}
                 >
                     <FloatingLines
-                        enabledWaves={['top', 'bottom']}
+                        enabledWaves={['top', 'middle', 'bottom']}
                         lineCount={lineCount}
                         lineDistance={lineDistance}
                         bendRadius={3}
@@ -80,6 +66,6 @@ export default function Welcome() {
                 </div>
                 <Footer />
             </div>
-        </>
+        </HomeLayout>
     );
 }

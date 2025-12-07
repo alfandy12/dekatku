@@ -25,7 +25,7 @@ class TanamanProducts
                 'title' => 'Lidah Mertua (Sansevieria)',
                 'price' => 25000,
                 'description' => 'Tanaman yang tahan segala kondisi dan dipercaya mampu menyaring udara.',
-                'url_media' => 'product/tanaman/sansevieria.jpg',
+                'url_media' => 'product/tanaman/sanseviera.jpg',
                 'categories' => ['Tanaman'],
             ],
             [

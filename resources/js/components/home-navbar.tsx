@@ -63,7 +63,7 @@ const HomeNavbar = () => {
                     )}
 
                     <GradientButton className="px-4 py-2">
-                        <Link href="/explore">Jelajahi UMKM</Link>
+                        <Link href="/umkm">Jelajahi UMKM</Link>
                     </GradientButton>
                 </div>
             </div>
@@ -131,7 +131,7 @@ const HomeNavbar = () => {
                                 </>
                             )}
 
-                            <Link href="/explore">
+                            <Link href="/umkm">
                                 <GradientButton className="w-full px-4 py-3">
                                     Jelajahi UMKM
                                 </GradientButton>

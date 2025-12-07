@@ -50,8 +50,11 @@ class ConsolePanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                \App\Filament\Widgets\StoreOverview::class,
+                \App\Filament\Widgets\RecentProducts::class,
+                \App\Filament\Widgets\CategoryChart::class,
+                \App\Filament\Widgets\StoreInfo::class,
+                \App\Filament\Widgets\QuickActions::class,
             ])
             ->unsavedChangesAlerts()
             ->navigationGroups([
@@ -121,7 +124,7 @@ class ConsolePanelProvider extends PanelProvider
             ->tenantMenuItems([
                 'profile' => MenuItem::make()
                     ->visible(function (): bool {
-                        return Filament::getTenant() !== null && auth()->user()->can('page_EditStoreProfile');
+                        return Filament::getTenant() !== null && Auth::user()->can('page_EditStoreProfile');
                     })
                     ->label('Store Profile'),
                 'member' => MenuItem::make()
@@ -129,7 +132,7 @@ class ConsolePanelProvider extends PanelProvider
                     ->url(fn(): string => Member::getUrl())
                     ->icon('heroicon-m-user-group')
                     ->visible(function (): bool {
-                        return Filament::getTenant() !== null && auth()->user()->can('page_Member');
+                        return Filament::getTenant() !== null && Auth::user()->can('page_Member');
                     }),
                 // ...
             ]);
