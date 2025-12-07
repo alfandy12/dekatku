@@ -56,7 +56,7 @@ export default function Welcome() {
                         </div>
                     </div>
 
-                    <div className="w-full">
+                    <div className="w-full bg-zinc-950!">
                         <div className="mx-auto w-full max-w-7xl p-2 md:p-3">
                             <About />
                             <Store />
