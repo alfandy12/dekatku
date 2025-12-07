@@ -456,7 +456,7 @@ class UserStoreSeeder extends Seeder
             $allStores[20]->id => ['is_owner' => true],
         ]);
 
-        $allPermissions = Permission::all();
+        $allPermissions = Permission::where('guard_name', 'web')->get();
 
         $usersWithStoreOwnerRole = User::whereHas('stores', function ($query) {
             $query->where('is_owner', true);

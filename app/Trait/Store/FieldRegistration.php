@@ -101,6 +101,7 @@ trait FieldRegistration
                 ->columnSpanFull()
                 ->label('Description')
                 ->maxLength(1000)
+                ->required()
                 ->disableToolbarButtons([
                     'attachFiles',
                 ]),

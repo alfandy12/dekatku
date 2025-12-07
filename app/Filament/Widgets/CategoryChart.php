@@ -25,10 +25,13 @@ class CategoryChart extends ChartWidget
     {
         $tenantId = Filament::getTenant()->id;
 
-        $categories = Categories::withCount(['products' => function (Builder $query) use ($tenantId) {
-            $query->where('store_id', $tenantId);
-        }])
-            ->having('products_count', '>', 0)
+        $categories = Categories::query()
+            ->withCount(['products' => function (Builder $query) use ($tenantId) {
+                $query->where('store_id', $tenantId);
+            }])
+            ->whereHas('products', function (Builder $query) use ($tenantId) {
+                $query->where('store_id', $tenantId);
+            })
             ->orderBy('products_count', 'desc')
             ->limit(8)
             ->get();

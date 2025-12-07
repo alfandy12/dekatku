@@ -54,7 +54,7 @@ class RegisterStore extends RegisterTenant
                 ]
             );
 
-            $allPermissions = Permission::all();
+            $allPermissions = Permission::where('guard_name', 'web')->get();
 
             $newSuperAdminRole->givePermissionTo($allPermissions);
 
