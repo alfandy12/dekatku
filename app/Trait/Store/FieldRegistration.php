@@ -41,6 +41,7 @@ trait FieldRegistration
                 ]),
 
             Select::make('type')
+                ->columnSpanFull()
                 ->required()
                 ->label('Type')
                 ->options([
@@ -50,11 +51,13 @@ trait FieldRegistration
                 ->default('product'),
 
             LeafletMapPicker::make('location')
+                ->columnSpanFull()
                 ->label('Select Location')
                 ->helperText('Pick the location of your store on the map.')
                 ->defaultZoom(13),
 
             FileUpload::make('url_media')
+                ->columnSpanFull()
                 ->label('Logo Media')
                 ->directory(function (callable $get) {
                     $title = $get('title');
@@ -95,6 +98,7 @@ trait FieldRegistration
                 }),
 
             RichEditor::make('description')
+                ->columnSpanFull()
                 ->label('Description')
                 ->maxLength(1000)
                 ->disableToolbarButtons([

@@ -1,0 +1,118 @@
+<?php
+
+namespace App\Filament\Admin\Resources\StoreResource\RelationManagers;
+
+use Filament\Forms;
+use Filament\Tables;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use Filament\Support\Enums\FontWeight;
+use Illuminate\Database\Eloquent\Builder;
+use App\Trait\Store\Product\ProductTrait;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\RelationManagers\RelationManager;
+
+class ProductsRelationManager extends RelationManager
+{
+    protected static string $relationship = 'products';
+
+    protected static ?string $title = 'Products';
+
+    protected static ?string $icon = 'heroicon-o-shopping-bag';
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema(ProductTrait::getProductFormSchema());
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->recordTitleAttribute('title')
+            ->columns([
+                Tables\Columns\ImageColumn::make('url_media')
+                    ->label('Image')
+                    ->circular()
+                    ->defaultImageUrl(url('/images/placeholder-product.png')),
+
+                Tables\Columns\TextColumn::make('title')
+                    ->label('Product Name')
+                    ->searchable()
+                    ->sortable()
+                    ->weight(FontWeight::Bold)
+                    ->wrap(),
+
+                Tables\Columns\TextColumn::make('price')
+                    ->label('Price')
+                    ->money('IDR')
+                    ->sortable()
+                    ->weight(FontWeight::SemiBold)
+                    ->color('primary'),
+
+                Tables\Columns\TextColumn::make('categories.name')
+                    ->label('Categories')
+                    ->badge()
+                    ->color('info')
+                    ->separator(',')
+                    ->wrap(),
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Created')
+                    ->dateTime()
+                    ->sortable()
+                    ->since()
+                    ->toggleable(),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('categories')
+                    ->relationship('categories', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->multiple()
+                    ->label('Filter by Categories'),
+
+                Tables\Filters\Filter::make('price_range')
+                    ->form([
+                        Forms\Components\TextInput::make('price_from')
+                            ->numeric()
+                            ->prefix('Rp'),
+                        Forms\Components\TextInput::make('price_to')
+                            ->numeric()
+                            ->prefix('Rp'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['price_from'],
+                                fn(Builder $query, $price): Builder => $query->where('price', '>=', $price),
+                            )
+                            ->when(
+                                $data['price_to'],
+                                fn(Builder $query, $price): Builder => $query->where('price', '<=', $price),
+                            );
+                    }),
+            ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make()
+                    ->icon('heroicon-o-plus'),
+            ])
+            ->actions([
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ])
+            ->emptyStateActions([
+                Tables\Actions\CreateAction::make()
+                    ->icon('heroicon-o-plus'),
+            ])
+            ->emptyStateHeading('No products yet')
+            ->emptyStateDescription('Add your first product to this store.')
+            ->emptyStateIcon('heroicon-o-shopping-bag');
+    }
+}

@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\User;
 use App\Models\Product;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ProductPolicy
@@ -11,97 +11,74 @@ class ProductPolicy
     use HandlesAuthorization;
 
     /**
-     * Determine whether the user can view any models.
+     * Helper untuk mengecek permission dengan guard.
      */
-    public function viewAny(User $user): bool
+    private function check(Authenticatable $user, string $permission): bool
     {
-        return $user->can('view_any_product');
+        $guard = $user->guard_name ?? config('auth.defaults.guard') ?? 'admin';
+        if (method_exists($user, 'hasPermissionTo')) {
+            return $user->hasPermissionTo($permission, $guard);
+        }
+
+        return $user->can($permission);
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Product $product): bool
+    public function viewAny(Authenticatable $user): bool
     {
-        return $user->can('view_product');
+        return $this->check($user, 'view_any_product');
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function view(Authenticatable $user, Product $product): bool
     {
-        return $user->can('create_product');
+        return $this->check($user, 'view_product');
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Product $product): bool
+    public function create(Authenticatable $user): bool
     {
-        return $user->can('update_product');
+        return $this->check($user, 'create_product');
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, Product $product): bool
+    public function update(Authenticatable $user, Product $product): bool
     {
-        return $user->can('delete_product');
+        return $this->check($user, 'update_product');
     }
 
-    /**
-     * Determine whether the user can bulk delete.
-     */
-    public function deleteAny(User $user): bool
+    public function delete(Authenticatable $user, Product $product): bool
     {
-        return $user->can('delete_any_product');
+        return $this->check($user, 'delete_product');
     }
 
-    /**
-     * Determine whether the user can permanently delete.
-     */
-    public function forceDelete(User $user, Product $product): bool
+    public function deleteAny(Authenticatable $user): bool
     {
-        return $user->can('force_delete_product');
+        return $this->check($user, 'delete_any_product');
     }
 
-    /**
-     * Determine whether the user can permanently bulk delete.
-     */
-    public function forceDeleteAny(User $user): bool
+    public function forceDelete(Authenticatable $user, Product $product): bool
     {
-        return $user->can('force_delete_any_product');
+        return $this->check($user, 'force_delete_product');
     }
 
-    /**
-     * Determine whether the user can restore.
-     */
-    public function restore(User $user, Product $product): bool
+    public function forceDeleteAny(Authenticatable $user): bool
     {
-        return $user->can('restore_product');
+        return $this->check($user, 'force_delete_any_product');
     }
 
-    /**
-     * Determine whether the user can bulk restore.
-     */
-    public function restoreAny(User $user): bool
+    public function restore(Authenticatable $user, Product $product): bool
     {
-        return $user->can('restore_any_product');
+        return $this->check($user, 'restore_product');
     }
 
-    /**
-     * Determine whether the user can replicate.
-     */
-    public function replicate(User $user, Product $product): bool
+    public function restoreAny(Authenticatable $user): bool
     {
-        return $user->can('replicate_product');
+        return $this->check($user, 'restore_any_product');
     }
 
-    /**
-     * Determine whether the user can reorder.
-     */
-    public function reorder(User $user): bool
+    public function replicate(Authenticatable $user, Product $product): bool
+    {
+        return $this->check($user, 'replicate_product');
+    }
+
+    public function reorder(Authenticatable $user): bool
     {
         return $user->can('reorder_product');
     }

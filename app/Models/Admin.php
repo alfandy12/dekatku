@@ -18,13 +18,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class User extends Authenticatable implements FilamentUser, HasTenants, MustVerifyEmail
+class Admin extends Authenticatable implements FilamentUser
 
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles, HasPanelShield;
+    use HasFactory, Notifiable,  HasRoles;
 
-    protected $guard_name = 'web';
+    protected $guard_name = 'admin'; // Guard untuk Admin Panel
     /**
      * The attributes that are mass assignable.
      *
@@ -62,21 +61,6 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
         ];
     }
 
-    public function stores(): BelongsToMany
-    {
-        return $this->belongsToMany(Store::class)->withPivot('is_owner');
-    }
-
-    public function getTenants(Panel $panel): Collection
-    {
-        return $this->stores;
-    }
-
-    public function canAccessTenant(Model $tenant): bool
-    {
-        return true;
-        // return $this->teams()->whereKey($tenant)->exists();
-    }
     public function canAccessPanel(Panel $panel): bool
     {
         // Add your logic here. For example, check if the user is marked as an admin.
@@ -84,8 +68,4 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
         return true;
     }
 
-    public function getTenantName(Model $tenant): string
-    {
-        return $tenant->title;
-    }
 }
