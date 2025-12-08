@@ -279,6 +279,7 @@ Gunakan akun berikut untuk masuk ke sistem:
 * [**@alfandy12**](https://github.com/alfandy12) (Team Lead)
 * [**@ferdi-alf**](https://github.com/ferdi-alf) (Developer)
 * [**@arttVinci**](https://github.com/arttVinci) (Developer)
+* [**@ridhsuki**](https://github.com/Ridhsuki) (Documentation)
 
 ---
 
